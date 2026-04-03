@@ -1,4 +1,4 @@
-## Linear Link to the related issue
+## Linear Link to the Related Issue
 https://linear.app/amad-zai/issue/AMA-
 
 ## Description
