@@ -7,16 +7,22 @@ class UrlsController < ApplicationController
   rate_limit to: 60, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
 
   def shorten
-    url = Url.new(
-      target_url: url_params[:target_url],
-      title: Urls::FetchTitle.call(url_params[:target_url]), # TODO: Make async
-      short_url: Urls::GenerateShortUrl.call,
-    )
+    target_url = url_params[:target_url]
+
+    url = Url.new(target_url: target_url)
+    url.validate
+
+    if url.errors[:target_url].present?
+      return render json: { errors: url.errors.full_messages }, status: :unprocessable_entity
+    end
+
+    url.short_url = Urls::GenerateShortUrl.call
+    url.title = Urls::FetchTitle.call(target_url)
 
     if url.save
       render json: {
-        short_url: url.short_url,
         target_url: url.target_url,
+        short_url: url.short_url,
         title: url.title
       }, status: :created
     else
@@ -31,8 +37,8 @@ class UrlsController < ApplicationController
 
     render json: urls.map { |url|
       {
-        short_url: url.short_url,
         target_url: url.target_url,
+        short_url: url.short_url,
         title: url.title,
         click_count: url.click_count
       }
