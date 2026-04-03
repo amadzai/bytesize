@@ -12,5 +12,4 @@ https://linear.app/amad-zai/issue/AMA-
 - [ ] ✨ New feature
 - [ ] 💥 Breaking changes
 - [ ] 📝 Documentation update
-- [ ] 🚀 Performance improvement
 - [ ] 🎨 Style updates
