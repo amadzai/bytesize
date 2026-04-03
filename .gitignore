@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+vendor/bundle/
+.bundle/
+
+# Environment files
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+logs/
+log/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+coverage/
+
+# Runtime and temp files
+temp/
+*.pid
+*.pid.lock
+**/tmp/*
+!**/tmp/.keep
+!**/tmp/pids/
+!**/tmp/storage/
+**/tmp/pids/*
+!**/tmp/pids/.keep
+**/tmp/storage/*
+!**/tmp/storage/.keep
+
+# Storage / uploads
+**/storage/*
+!**/storage/.keep
+
+# Rails secrets
+**/config/*.key
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
