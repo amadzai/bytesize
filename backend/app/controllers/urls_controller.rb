@@ -13,7 +13,10 @@ class UrlsController < ApplicationController
     url.validate
 
     if url.errors[:target_url].present?
-      return render json: { errors: url.errors.full_messages }, status: :unprocessable_entity
+      return render json:
+        {
+          errors: url.errors.full_messages_for(:target_url)
+        }, status: :unprocessable_entity
     end
 
     url.short_url = Urls::GenerateShortUrl.call
