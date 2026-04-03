@@ -10,5 +10,6 @@ class CreateUrls < ActiveRecord::Migration[8.1]
     end
 
     add_index :urls, :short_url, unique: true
+    add_index :urls, :created_at
   end
 end
