@@ -2,6 +2,10 @@ require "net/http"
 
 module Urls
   class FetchTitle
+    MAX_RETRIES = 3
+    TIMEOUT_SECONDS = 2
+    FALLBACK_TITLE = "Unknown"
+
     def self.call(target_url)
       new(target_url).call
     end
@@ -12,12 +16,25 @@ module Urls
 
     def call
       uri = URI.parse(@target_url)
-      response = Net::HTTP.get_response(uri)
-      doc = Nokogiri::HTML(response.body)
-      doc.at_css("title")&.text&.strip
-    rescue URI::InvalidURIError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
-      Rails.logger.warn("Failed to fetch title for #{@target_url}: #{e.message}")
-      nil
+
+      MAX_RETRIES.times do |attempt|
+        begin
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == "https"
+          http.open_timeout = TIMEOUT_SECONDS
+          http.read_timeout = TIMEOUT_SECONDS
+
+          response = http.get(uri.request_uri)
+          next unless response.is_a?(Net::HTTPSuccess)
+
+          title = Nokogiri::HTML(response.body).at_css("title")&.text&.strip
+          return title if title.present?
+        rescue StandardError => e
+          Rails.logger.warn("Attempt #{attempt + 1} failed for #{@target_url}: #{e.class} - #{e.message}")
+        end
+      end
+
+      FALLBACK_TITLE
     end
   end
 end
