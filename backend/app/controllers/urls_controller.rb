@@ -1,8 +1,4 @@
 class UrlsController < ApplicationController
-  RATE_LIMIT_EXCEEDED = -> {
-    render json: { error: "Rate limit exceeded. Try again later." }, status: :too_many_requests
-  }
-
   rate_limit to: 10, within: 1.minute, only: :shorten, with: RATE_LIMIT_EXCEEDED
   rate_limit to: 60, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
 
@@ -65,6 +61,7 @@ class UrlsController < ApplicationController
     url = Url.select(:id, :target_url).find_by!(short_url: params[:short_url])
 
     Url.increment_counter(:click_count, url.id)
+    Analytics::TrackVisitLocationJob.perform_later(url.id, request.remote_ip)
 
     redirect_to url.target_url, status: :found, allow_other_host: true
   rescue ActiveRecord::RecordNotFound

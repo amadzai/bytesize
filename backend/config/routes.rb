@@ -3,5 +3,6 @@ Rails.application.routes.draw do
 
   post "urls/shorten", to: "urls#shorten"
   get "urls", to: "urls#index"
+  get "urls/:short_url/analytics", to: "analytics#index"
   get "urls/:short_url", to: "urls#redirect", as: :url_redirect
 end
