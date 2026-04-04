@@ -19,7 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_061848) do
     t.string "location", null: false
     t.datetime "updated_at", null: false
     t.uuid "url_id", null: false
-    t.index ["url_id"], name: "index_analytics_on_url_id"
+    t.index ["url_id", "created_at", "id"], name: "index_analytics_on_url_id_created_at_id_desc", order: { created_at: :desc, id: :desc }
   end
 
   create_table "urls", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
