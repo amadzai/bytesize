@@ -5,10 +5,11 @@ services:
       dockerfile: Dockerfile.dev
     command: bash -lc "bundle check || bundle install && ./bin/rails db:prepare && ./bin/dev -b 0.0.0.0 -p 3000"
     environment:
-      RAILS_ENV: development
       SOLID_QUEUE_IN_PUMA: "true"
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/backend_development
-      QUEUE_DATABASE_URL: postgresql://postgres:postgres@db:5432/backend_development_queue
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
     ports:
       - "3000:3000"
     volumes:
