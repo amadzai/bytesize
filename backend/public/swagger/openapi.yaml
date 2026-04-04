@@ -1,0 +1,282 @@
+openapi: 3.0.3
+info:
+  title: ByteSize URL Shortener API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development
+tags:
+  - name: Health
+  - name: URLs
+  - name: Analytics
+paths:
+  /up:
+    get:
+      tags: [Health]
+      summary: Health check endpoint
+      operationId: healthCheck
+      responses:
+        "200":
+          description: App is healthy
+          content:
+            text/html:
+              schema:
+                type: string
+              example: OK
+  /urls/shorten:
+    post:
+      tags: [URLs]
+      summary: Create a short URL
+      operationId: shortenUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShortenUrlRequest"
+      responses:
+        "201":
+          description: Short URL created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShortenUrlResponse"
+              example:
+                target_url: https://example.com/path
+                short_url: abc12345
+                title: Example Domain
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+              example:
+                errors:
+                  - Target url must be a valid HTTP or HTTPS URL
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+  /urls:
+    get:
+      tags: [URLs]
+      summary: List shortened URLs
+      operationId: listUrls
+      parameters:
+        - in: query
+          name: page
+          required: false
+          description: Page number for Pagy offset pagination
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Paginated URL list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UrlListResponse"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+  /urls/{short_url}:
+    get:
+      tags: [URLs]
+      summary: Redirect to target URL
+      operationId: redirectShortUrl
+      parameters:
+        - $ref: "#/components/parameters/ShortUrlPath"
+      responses:
+        "302":
+          description: Redirect to target URL
+          headers:
+            Location:
+              description: Absolute target URL
+              schema:
+                type: string
+                format: uri
+        "404":
+          $ref: "#/components/responses/ShortUrlNotFound"
+  /urls/{short_url}/analytics:
+    get:
+      tags: [Analytics]
+      summary: List analytics entries for a short URL
+      operationId: listUrlAnalytics
+      parameters:
+        - $ref: "#/components/parameters/ShortUrlPath"
+        - in: query
+          name: page
+          required: false
+          description: |
+            Pagination cursor/page value for Pagy keyset.
+            Use the previous response's `pagination.next` when present.
+          schema:
+            oneOf:
+              - type: integer
+                minimum: 1
+              - type: string
+      responses:
+        "200":
+          description: Paginated analytics list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsListResponse"
+        "404":
+          $ref: "#/components/responses/ShortUrlNotFound"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+components:
+  parameters:
+    ShortUrlPath:
+      in: path
+      name: short_url
+      required: true
+      description: Generated short URL code
+      schema:
+        type: string
+      example: abc12345
+  responses:
+    ShortUrlNotFound:
+      description: Short URL was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Short URL not found
+    RateLimitExceeded:
+      description: Too many requests in the current rate limit window
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Rate limit exceeded. Try again later.
+  schemas:
+    ShortenUrlRequest:
+      type: object
+      required: [target_url]
+      properties:
+        target_url:
+          type: string
+          format: uri
+          description: Full HTTP(S) target URL to shorten
+          example: https://example.com/path
+    ShortenUrlResponse:
+      type: object
+      required: [target_url, short_url, title]
+      properties:
+        target_url:
+          type: string
+          format: uri
+          description: Original URL provided by the user
+        short_url:
+          type: string
+          description: Generated short code
+        title:
+          type: string
+          description: Page title fetched from the target URL
+    UrlItem:
+      type: object
+      required: [target_url, short_url, title, click_count]
+      properties:
+        target_url:
+          type: string
+          format: uri
+          description: Original destination URL
+        short_url:
+          type: string
+          description: Generated short code
+        title:
+          type: string
+          description: Page title fetched from the target URL
+        click_count:
+          type: integer
+          minimum: 0
+          description: Number of redirect hits recorded
+    UrlListPagination:
+      type: object
+      required: [page]
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        previous:
+          type: integer
+          nullable: true
+          description: Previous page number when available
+        next:
+          type: integer
+          nullable: true
+          description: Next page number when available
+        previous_url:
+          type: string
+          nullable: true
+          description: URL to the previous page when available
+        next_url:
+          type: string
+          nullable: true
+          description: URL to the next page when available
+    UrlListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UrlItem"
+        pagination:
+          $ref: "#/components/schemas/UrlListPagination"
+    AnalyticsItem:
+      type: object
+      required: [id, url_id, location, created_at, updated_at]
+      properties:
+        id:
+          type: integer
+          description: Analytics row ID
+        url_id:
+          type: integer
+          description: Associated URL ID
+        location:
+          type: string
+          nullable: true
+          description: Inferred visitor location
+        created_at:
+          type: string
+          format: date-time
+          description: Record creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Record update timestamp
+    AnalyticsListPagination:
+      type: object
+      required: [next, page, limit, has_more]
+      properties:
+        next:
+          oneOf:
+            - type: string
+            - type: integer
+          nullable: true
+          description: Cursor/page value for the next request when available
+        page:
+          oneOf:
+            - type: string
+            - type: integer
+          description: Current cursor/page value
+        limit:
+          type: integer
+          description: Page size used for this response
+        has_more:
+          type: boolean
+          description: Whether additional records are available
+    AnalyticsListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsItem"
+        pagination:
+          $ref: "#/components/schemas/AnalyticsListPagination"
