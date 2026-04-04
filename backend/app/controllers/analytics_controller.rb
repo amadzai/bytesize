@@ -1,7 +1,15 @@
 class AnalyticsController < ApplicationController
   def index
     url = Url.find_by!(short_url: params[:short_url])
-    analytics = url.analytics.order(created_at: :desc)
+
+    collection = url.analytics.order(created_at: :desc, id: :desc)
+
+    @pagy, analytics = pagy(
+      :keyset,
+      collection,
+      limit: 10,
+      client_max_limit: nil # Fixed to limit
+    )
 
     render json: {
       data: analytics.map { |analytic|
@@ -12,6 +20,12 @@ class AnalyticsController < ApplicationController
           created_at: analytic.created_at,
           updated_at: analytic.updated_at
         }
+      },
+      pagination: {
+        next: @pagy.next,
+        page: @pagy.page,
+        limit: @pagy.limit,
+        has_more: @pagy.next.present?
       }
     }
   rescue ActiveRecord::RecordNotFound
