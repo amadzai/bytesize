@@ -1,13 +1,11 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  title: MyString
-  target_url: MyString
-  short_url: MyString
+  title: Example Domain
+  target_url: https://example.com
+  short_url: exmpl001
   click_count: 1
 
 two:
-  title: MyString
-  target_url: MyString
-  short_url: MyString
-  click_count: 1
+  title: Ruby Lang
+  target_url: https://www.ruby-lang.org/en/
+  short_url: ruby0002
+  click_count: 3
