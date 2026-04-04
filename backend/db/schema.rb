@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_082550) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_061848) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "analytics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "location", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "url_id", null: false
+    t.index ["url_id", "created_at", "id"], name: "index_analytics_on_url_id_created_at_id_desc", order: { created_at: :desc, id: :desc }
+  end
 
   create_table "urls", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "click_count", default: 0, null: false
@@ -24,4 +32,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_082550) do
     t.index ["created_at"], name: "index_urls_on_created_at"
     t.index ["short_url"], name: "index_urls_on_short_url", unique: true
   end
+
+  add_foreign_key "analytics", "urls"
 end
