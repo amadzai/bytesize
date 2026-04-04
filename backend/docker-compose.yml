@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      RAILS_ENV: production
+      SOLID_QUEUE_IN_PUMA: "true"
+      BACKEND_DATABASE_PASSWORD: ${BACKEND_DATABASE_PASSWORD}
+      PGHOST: db
+      PGPORT: 5432
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/up || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: ${BACKEND_DATABASE_PASSWORD}
+      POSTGRES_DB: backend_production
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U backend -d backend_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  postgres_data:
