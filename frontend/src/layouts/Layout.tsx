@@ -34,8 +34,8 @@ export function Layout({ children }: LayoutProps) {
                 to="/history"
                 className="group flex items-center gap-2 py-2"
               >
-                <BarChart3 className="text-foreground group-hover:text-primary h-6 w-6 transition-colors" />
-                <span className="text-foreground group-hover:text-primary text-xl font-bold transition-colors">
+                <BarChart3 className="text-foreground group-hover:text-primary h-5 w-5 transition-colors" />
+                <span className="text-foreground group-hover:text-primary text-lg font-bold transition-colors">
                   Analytics
                 </span>
               </RouterLink>

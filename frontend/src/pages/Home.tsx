@@ -12,7 +12,7 @@ export function Home() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-16">
+    <div className="container mx-auto max-w-5xl px-4 pt-28 pb-8">
       {/* Header */}
       <div className="mb-12 text-center">
         <div className="inline-flex h-20 w-32 items-center justify-center">
