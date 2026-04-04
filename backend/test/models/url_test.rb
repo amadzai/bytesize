@@ -21,23 +21,21 @@ class UrlTest < ActiveSupport::TestCase
     assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
   end
 
-  test "is invalid when target_url is http with empty host" do
-    url = Url.new(target_url: "http://", short_url: "nohost02")
-
+  test "is invalid when http url has no host" do
+    url = Url.new(target_url: "http://", short_url: "nohost01")
     assert_not url.valid?
     assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
   end
 
-  test "is invalid when target_url has http(s) scheme but no host" do
-    url = Url.new(target_url: "https:///path-only", short_url: "nohost01")
-
+  test "is invalid when https url has no host" do
+    url = Url.new(target_url: "https://", short_url: "nohost02")
     assert_not url.valid?
     assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
   end
 
   test "is invalid with duplicate short_url" do
     existing = urls(:one)
-    duplicate = Url.new(target_url: "https://another-example.com", short_url: existing.short_url)
+    duplicate = Url.new(target_url: "https://example.com", short_url: existing.short_url)
 
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:short_url], "has already been taken"
