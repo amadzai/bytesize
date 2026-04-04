@@ -35,16 +35,29 @@ class UrlsController < ApplicationController
     retry
   end
 
-  def index # TODO: Add pagination
-    urls = Url.all.order(created_at: :desc)
+  def index
+    collection = Url.order(created_at: :desc)
 
-    render json: urls.map { |url|
-      {
-        target_url: url.target_url,
-        short_url: url.short_url,
-        title: url.title,
-        click_count: url.click_count
-      }
+    @pagy, urls = pagy(
+      :countish,
+      collection,
+      limit: 10,
+      client_max_limit: nil, # Fixed to limit
+      ttl: 300
+    )
+
+    render json: {
+      data: urls.map { |url|
+        {
+          target_url: url.target_url,
+          short_url: url.short_url,
+          title: url.title,
+          click_count: url.click_count
+        }
+      },
+      pagination: @pagy.data_hash(
+        data_keys: %i[page previous next previous_url next_url]
+      )
     }
   end
 
