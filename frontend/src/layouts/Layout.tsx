@@ -8,7 +8,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="bg-background text-foreground min-h-screen">
+    <div className="bg-background text-foreground flex min-h-screen flex-col">
       {/* Header */}
       <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur-sm">
         <div className="container mx-auto max-w-5xl px-4 py-4">
@@ -45,7 +45,18 @@ export function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
+
+      {/* Footer */}
+      <footer className="bg-background/80 border-border border-t backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-muted-foreground text-center text-sm">
+            <p>
+              © {new Date().getFullYear()} Bytesize. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
