@@ -65,6 +65,7 @@ class UrlsController < ApplicationController
     url = Url.select(:id, :target_url).find_by!(short_url: params[:short_url])
 
     Url.increment_counter(:click_count, url.id)
+    Analytics::TrackVisitLocationJob.perform_later(url.id, request.remote_ip)
 
     redirect_to url.target_url, status: :found, allow_other_host: true
   rescue ActiveRecord::RecordNotFound
