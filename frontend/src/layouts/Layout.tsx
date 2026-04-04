@@ -15,7 +15,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             <RouterLink
               to="/"
-              className="flex items-center gap-2 transition-opacity hover:opacity-80"
+              className="group flex items-center gap-2 transition-opacity hover:opacity-80"
             >
               <div className="inline-flex h-10 w-12 items-center justify-center">
                 <img
@@ -24,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
                   className="h-full w-full object-contain"
                 />
               </div>
-              <span className="text-foreground text-2xl font-bold">
+              <span className="text-foreground group-hover:text-primary text-2xl font-bold transition-colors">
                 bytesize
               </span>
             </RouterLink>
@@ -34,8 +34,8 @@ export function Layout({ children }: LayoutProps) {
                 to="/history"
                 className="group flex items-center gap-2 py-2"
               >
-                <BarChart3 className="text-foreground h-6 w-6 transition-colors group-hover:text-primary" />
-                <span className="text-foreground text-xl font-bold transition-colors group-hover:text-primary">
+                <BarChart3 className="text-foreground group-hover:text-primary h-6 w-6 transition-colors" />
+                <span className="text-foreground group-hover:text-primary text-xl font-bold transition-colors">
                   Analytics
                 </span>
               </RouterLink>
