@@ -1,7 +1,7 @@
 require "test_helper"
 
 class UrlTest < ActiveSupport::TestCase
-  test "is valid with https target_url and unique short_url" do
+  test "is valid with https target_url and short_url" do
     url = Url.new(target_url: "https://example.com/docs", short_url: "docs0001")
 
     assert url.valid?
@@ -16,6 +16,20 @@ class UrlTest < ActiveSupport::TestCase
 
   test "is invalid with non-http(s) target_url" do
     url = Url.new(target_url: "ftp://example.com/file", short_url: "ftp00001")
+
+    assert_not url.valid?
+    assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
+  end
+
+  test "is invalid when target_url is http with empty host" do
+    url = Url.new(target_url: "http://", short_url: "nohost02")
+
+    assert_not url.valid?
+    assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
+  end
+
+  test "is invalid when target_url has http(s) scheme but no host" do
+    url = Url.new(target_url: "https:///path-only", short_url: "nohost01")
 
     assert_not url.valid?
     assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
