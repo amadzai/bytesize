@@ -80,6 +80,25 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     assert first.key?("click_count")
   end
 
+  test "index rate limits after 60 requests per minute" do
+    Rails.cache.clear
+
+    Url.create!(target_url: "https://example.com/rate-index", short_url: "idxrate1", title: "Rate Index")
+
+    60.times do
+      get "/urls", headers: { "REMOTE_ADDR" => "203.0.113.20" }
+      assert_response :success
+    end
+
+    get "/urls", headers: { "REMOTE_ADDR" => "203.0.113.20" }
+
+    assert_response :too_many_requests
+    body = JSON.parse(response.body)
+    assert_equal "Rate limit exceeded. Try again later.", body["error"]
+  ensure
+    Rails.cache.clear
+  end
+
   test "redirect returns 302 and increments click_count" do
     url = Url.create!(
       target_url: "https://example.com/redirect-target",
