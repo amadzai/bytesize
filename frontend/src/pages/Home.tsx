@@ -12,7 +12,7 @@ export function Home() {
   };
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-16">
+    <div className="container mx-auto max-w-5xl px-4 py-16">
       {/* Header */}
       <div className="mb-12 text-center">
         <div className="inline-flex h-20 w-32 items-center justify-center">
@@ -22,7 +22,7 @@ export function Home() {
             className="h-full w-full object-contain"
           />
         </div>
-        <h1 className="text-foreground mb-2 text-4xl font-bold">bytesize</h1>
+        <h1 className="text-foreground mb-2 text-5xl font-bold">bytesize</h1>
         <p className="text-muted-foreground">
           Transform long URLs into short, shareable links
         </p>
@@ -60,7 +60,7 @@ export function Home() {
       </div>
 
       {urlsCount === 0 && (
-        <div className="text-muted-foreground py-12 text-center">
+        <div className="text-muted-foreground py-4a text-center">
           <p>No shortened URLs yet. Create your first one above!</p>
         </div>
       )}
