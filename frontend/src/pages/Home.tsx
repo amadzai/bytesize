@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'lucide-react';
+import icon from '../assets/icon.png';
 
 export function Home() {
   const [url, setUrl] = useState('');
@@ -14,12 +15,14 @@ export function Home() {
     <div className="container mx-auto max-w-3xl px-4 py-16">
       {/* Header */}
       <div className="mb-12 text-center">
-        <div className="bg-primary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg">
-          <Link className="text-primary-foreground h-8 w-8" />
+        <div className="inline-flex h-20 w-32 items-center justify-center">
+          <img
+            src={icon}
+            alt="Bytesize logo"
+            className="h-full w-full object-contain"
+          />
         </div>
-        <h1 className="text-foreground mb-2 text-4xl font-bold">
-          Bytesize
-        </h1>
+        <h1 className="text-foreground mb-2 text-4xl font-bold">bytesize</h1>
         <p className="text-muted-foreground">
           Transform long URLs into short, shareable links
         </p>

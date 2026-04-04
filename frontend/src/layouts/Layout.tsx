@@ -1,5 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { Link, BarChart3 } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
+import icon from '../assets/icon.png';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,20 +15,24 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             <RouterLink
               to="/"
-              className="flex items-center gap-3 transition-opacity hover:opacity-80"
+              className="flex items-center gap-2 transition-opacity hover:opacity-80"
             >
-              <div className="bg-primary inline-flex h-10 w-10 items-center justify-center rounded-lg shadow-md">
-                <Link className="text-primary-foreground h-5 w-5" />
+              <div className="inline-flex h-8 w-10 items-center justify-center">
+                <img
+                  src={icon}
+                  alt="Bytesize logo"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <span className="text-foreground text-xl font-bold">
-                Bytesize
+                bytesize
               </span>
             </RouterLink>
 
             <nav className="flex items-center gap-4">
               <RouterLink
                 to="/history"
-                className="text-muted-foreground hover:text-primary flex items-center gap-2 px-4 py-2 transition-colors"
+                className="text-foreground hover:text-primary flex items-center gap-2 px-4 py-2 transition-colors"
               >
                 <BarChart3 className="h-4 w-4" />
                 <span>Analytics</span>
