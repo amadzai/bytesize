@@ -28,7 +28,7 @@ module Urls
           next unless response.is_a?(Net::HTTPSuccess)
 
           title = Nokogiri::HTML(response.body).at_css("title")&.text&.strip
-          return title if title.present?
+          return title.presence || FALLBACK_TITLE
         rescue StandardError => e
           Rails.logger.warn("Attempt #{attempt + 1} failed for #{@target_url}: #{e.class} - #{e.message}")
         end
