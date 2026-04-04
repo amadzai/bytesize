@@ -1,6 +1,6 @@
 import { BarChart3 } from 'lucide-react';
 
-export function History() {
+export function Analytics() {
   const urlsCount = 0;
   const totalClicks = 0;
   const averageClicks = 0;
@@ -14,9 +14,7 @@ export function History() {
             <BarChart3 className="text-primary-foreground h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-foreground text-3xl font-bold">
-              Platform Analytics
-            </h1>
+            <h1 className="text-foreground text-3xl font-bold">Plaform Analytics</h1>
             <p className="text-muted-foreground">
               View all shortened URLs and their visit analytics
             </p>

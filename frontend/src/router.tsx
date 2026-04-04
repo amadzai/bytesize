@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Layout } from './layouts/Layout';
 import { Home } from './pages/Home';
-import { History } from './pages/History';
+import { Analytics } from './pages/Analytics';
 
 export const router = createBrowserRouter([
   {
@@ -16,7 +16,7 @@ export const router = createBrowserRouter([
     path: '/history',
     element: (
       <Layout>
-        <History />
+        <Analytics />
       </Layout>
     ),
   },
