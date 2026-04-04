@@ -10,7 +10,7 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
 
     Urls::GenerateShortUrl.stub(:call, short_code) do
       Urls::FetchTitle.stub(:call, fetched_title) do
-        post "/urls/shorten", params: { url: { target_url: target_url } }
+        post "/urls/shorten", params: { target_url: target_url }
       end
     end
 
@@ -28,7 +28,7 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "shorten returns 422 with error message for invalid URL" do
-    post "/urls/shorten", params: { url: { target_url: "not-a-url" } }
+    post "/urls/shorten", params: { target_url: "not-a-url" }
 
     assert_response :unprocessable_entity
 
@@ -44,12 +44,12 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
       Urls::FetchTitle.stub(:call, "Rate Title") do
         10.times do
           post "/urls/shorten",
-               params: { url: { target_url: "https://example.com/#{SecureRandom.hex(4)}" } },
+               params: { target_url: "https://example.com/#{SecureRandom.hex(4)}" },
                headers: { "REMOTE_ADDR" => "203.0.113.10" }
         end
 
         post "/urls/shorten",
-             params: { url: { target_url: "https://example.com/blocked" } },
+             params: { target_url: "https://example.com/blocked" },
              headers: { "REMOTE_ADDR" => "203.0.113.10" }
       end
     end
