@@ -64,7 +64,7 @@ class UrlsController < ApplicationController
   def redirect
     url = Url.select(:id, :target_url).find_by!(short_url: params[:short_url])
 
-    Url.increment_counter(:click_count, url.id) # rubocop:disable Rails/SkipsModelValidations
+    Url.increment_counter(:click_count, url.id)
 
     redirect_to url.target_url, status: :found, allow_other_host: true
   rescue ActiveRecord::RecordNotFound

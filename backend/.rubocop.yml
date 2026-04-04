@@ -16,3 +16,7 @@ Rails:
   Enabled: true
 Security:
   Enabled: true
+
+Rails/SkipsModelValidations:
+  AllowedMethods:
+    - increment_counter
