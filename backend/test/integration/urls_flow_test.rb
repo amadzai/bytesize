@@ -1,6 +1,8 @@
 require "test_helper"
 
 class UrlsFlowTest < ActionDispatch::IntegrationTest
+  include ActiveJob::TestHelper
+
   test "shorten returns 201 with target_url, short_url, and title" do
     target_url = "https://example.com/path"
     short_code = "abc12345"
@@ -108,6 +110,23 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     )
 
     get url_redirect_path(short_url: url.short_url)
+
+    assert_response :redirect
+    assert_redirected_to url.target_url
+    assert_equal 1, url.reload.click_count
+  end
+
+  test "redirect enqueues track visit location job with url id and remote ip" do
+    url = Url.create!(
+      target_url: "https://example.com/redirect-target",
+      short_url: "go123456",
+      title: "Redirect Target",
+      click_count: 0
+    )
+
+    assert_enqueued_with(job: Analytics::TrackVisitLocationJob, args: [ url.id, "203.0.113.30" ]) do
+      get url_redirect_path(short_url: url.short_url), headers: { "REMOTE_ADDR" => "203.0.113.30" }
+    end
 
     assert_response :redirect
     assert_redirected_to url.target_url
