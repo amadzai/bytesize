@@ -5,81 +5,8 @@ import {
   type AnalyticsUrlMapping,
 } from '../components/AnalyticsUrlList';
 
-const mockUrls: AnalyticsUrlMapping[] = [
-  {
-    id: 'url-1',
-    title: 'Spring Launch Campaign',
-    longUrl:
-      'https://www.example.com/blog/spring-launch-campaign-announcement-and-feature-breakdown',
-    shortUrl: 'sprng26',
-    createdAt: 1712311200000,
-    clicks: 14,
-    visits: [
-      {
-        id: 'visit-1',
-        timestamp: 1712314800000,
-        location: 'San Francisco, CA',
-      },
-      {
-        id: 'visit-2',
-        timestamp: 1712318400000,
-        location: 'New York, NY',
-      },
-      {
-        id: 'visit-3',
-        timestamp: 1712322000000,
-        location: 'London, UK',
-      },
-    ],
-  },
-  {
-    id: 'url-2',
-    title: 'React Effects Guide',
-    longUrl: 'https://react.dev/learn/you-might-not-need-an-effect',
-    shortUrl: 'rctfx',
-    createdAt: 1712293200000,
-    clicks: 9,
-    visits: [
-      {
-        id: 'visit-4',
-        timestamp: 1712296800000,
-        location: 'Berlin, Germany',
-      },
-      {
-        id: 'visit-5',
-        timestamp: 1712300400000,
-        location: 'Toronto, Canada',
-      },
-    ],
-  },
-  {
-    id: 'url-3',
-    title: 'Tailwind Responsive Design',
-    longUrl: 'https://tailwindcss.com/docs/responsive-design',
-    shortUrl: 'twrsp',
-    createdAt: 1712221200000,
-    clicks: 5,
-    visits: [
-      {
-        id: 'visit-6',
-        timestamp: 1712224800000,
-        location: 'Tokyo, Japan',
-      },
-    ],
-  },
-  {
-    id: 'url-4',
-    title: 'Q2 Internal Playbook',
-    longUrl: 'https://docs.example.com/internal/q2-playbook',
-    shortUrl: 'q2pb',
-    createdAt: 1712134800000,
-    clicks: 0,
-    visits: [],
-  },
-];
-
 export function Analytics() {
-  const urls = mockUrls;
+  const urls: AnalyticsUrlMapping[] = [];
 
   const sortedUrls = [...urls].sort((a, b) => b.clicks - a.clicks);
   const urlsCount = sortedUrls.length;
