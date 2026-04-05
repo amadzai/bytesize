@@ -31,17 +31,34 @@ const mockUrls = [
   },
 ];
 
+const isValidHttpUrl = (value: string) => {
+  try {
+    const parsedUrl = new URL(value.trim());
+    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 export function Home() {
   const [url, setUrl] = useState('');
+  const [urlError, setUrlError] = useState('');
   const urlsCount = mockUrls.length;
   const isLoading = false;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isValidHttpUrl(url)) {
+      setUrlError('Invalid URL');
+      return;
+    }
+
+    setUrlError('');
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-6 md:px-4 py-12">
+    <div className="container mx-auto max-w-5xl px-6 py-12 md:px-4">
       {/* Header */}
       <div className="mb-6 text-center md:mb-8">
         <div className="inline-flex h-20 w-32 items-center justify-center">
@@ -74,16 +91,20 @@ export function Home() {
               id="url"
               type="text"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                if (urlError) setUrlError('');
+              }}
               placeholder="Paste long URL here"
               className="border-border bg-input-background focus:ring-ring w-full rounded-lg border px-4 py-3 transition-all outline-none focus:ring-2"
               disabled={isLoading}
             />
+            {urlError && <p className="text-error mt-2 text-sm">{urlError}</p>}
           </div>
           <button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="bg-primary text-primary-foreground w-full rounded-lg py-3 font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-primary text-primary-foreground w-full cursor-pointer rounded-lg py-3 font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? 'Shortening...' : 'Shorten URL'}
           </button>
