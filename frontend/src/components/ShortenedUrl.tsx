@@ -23,11 +23,6 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
     hour12: true,
   });
 
-  const truncateUrl = (url: string, maxLength: number = 100) => {
-    if (url.length <= maxLength) return url;
-    return url.substring(0, maxLength) + '...';
-  };
-
   const handleCopy = async () => {
     await navigator.clipboard.writeText(shortUrl).catch(() => {});
     setCopied(true);
@@ -39,8 +34,11 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
       <div className="space-y-3">
         {/* Title */}
         {mapping.title && (
-          <div>
-            <h3 className="text-card-foreground text-sm font-semibold md:text-base">
+          <div className="min-w-0">
+            <h3
+              className="text-card-foreground truncate text-sm font-semibold md:text-base"
+              title={mapping.title}
+            >
               {mapping.title}
             </h3>
           </div>
@@ -48,10 +46,8 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
 
         {/* Short URL */}
         <div className="flex items-center md:gap-3">
-          <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-2">
-            <p className="text-muted-foreground mb-1 text-xs md:text-sm">
-              Short URL
-            </p>
+          <div className="border-border bg-secondary flex-1 rounded-lg border px-2 py-2 md:px-4">
+            <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
             <div className="flex items-center gap-2">
               <a
                 href={shortUrl}
@@ -69,7 +65,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
                 className="text-muted-foreground hover:text-primary shrink-0 transition-colors"
                 title="Open short URL"
               >
-                <ExternalLink className="h-4 w-4" />
+                <ExternalLink className="h-3 w-3 md:h-4 md:w-4" />
               </a>
             </div>
           </div>
@@ -88,21 +84,15 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         </div>
 
         {/* Long URL */}
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="min-w-0 flex-1">
             <p className="text-muted-foreground mb-1 text-sm">Long URL</p>
-            <div className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
+            <div className="flex min-w-0 flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
               <p
-                className="text-card-foreground text-sm break-all md:hidden"
+                className="text-card-foreground w-full min-w-0 truncate text-sm lg:flex-1"
                 title={mapping.longUrl}
               >
-                {truncateUrl(mapping.longUrl, 40)}
-              </p>
-              <p
-                className="text-card-foreground hidden text-sm break-all md:block"
-                title={mapping.longUrl}
-              >
-                {truncateUrl(mapping.longUrl, 100)}
+                {mapping.longUrl}
               </p>
               <p className="text-muted-foreground shrink-0 text-xs lg:ml-auto">
                 Created {createdAtLabel}
