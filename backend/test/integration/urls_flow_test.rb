@@ -92,6 +92,8 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     assert first.key?("short_url")
     assert first.key?("title")
     assert first.key?("click_count")
+    assert first.key?("created_at")
+    assert_nothing_raised { Time.iso8601(first["created_at"]) }
   end
 
   test "index rate limits after 60 requests per minute" do

@@ -49,7 +49,8 @@ class UrlsController < ApplicationController
           target_url: url.target_url,
           short_url: url.short_url,
           title: url.title,
-          click_count: url.click_count
+          click_count: url.click_count,
+          created_at: url.created_at
         }
       },
       total_click_count: total_click_count,

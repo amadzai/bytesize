@@ -178,7 +178,7 @@ components:
           description: Page title fetched from the target URL
     UrlItem:
       type: object
-      required: [target_url, short_url, title, click_count]
+      required: [target_url, short_url, title, click_count, created_at]
       properties:
         target_url:
           type: string
@@ -194,6 +194,10 @@ components:
           type: integer
           minimum: 0
           description: Number of redirect hits recorded
+        created_at:
+          type: string
+          format: date-time
+          description: URL creation timestamp
     UrlListPagination:
       type: object
       required: [page, count]
