@@ -23,7 +23,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
     hour12: true,
   });
 
-  const truncateUrl = (url: string, maxLength: number = 80) => {
+  const truncateUrl = (url: string, maxLength: number = 100) => {
     if (url.length <= maxLength) return url;
     return url.substring(0, maxLength) + '...';
   };
@@ -47,7 +47,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         )}
 
         {/* Short URL */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center md:gap-3">
           <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-2">
             <p className="text-muted-foreground mb-1 text-xs md:text-sm">
               Short URL
@@ -74,7 +74,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
             </div>
           </div>
           <button
-            className="shrink-0 cursor-pointer rounded-lg p-3 transition-colors"
+            className="shrink-0 cursor-pointer rounded-lg pl-3 transition-colors md:p-3"
             title={copied ? 'Copied' : 'Copy short URL'}
             type="button"
             onClick={handleCopy}
@@ -91,14 +91,20 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         <div className="flex items-start gap-3">
           <div className="flex-1">
             <p className="text-muted-foreground mb-1 text-sm">Long URL</p>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
               <p
-                className="text-card-foreground text-sm break-all"
+                className="text-card-foreground text-sm break-all md:hidden"
                 title={mapping.longUrl}
               >
-                {truncateUrl(mapping.longUrl, 90)}
+                {truncateUrl(mapping.longUrl, 40)}
               </p>
-              <p className="text-muted-foreground ml-auto shrink-0 text-xs">
+              <p
+                className="text-card-foreground hidden text-sm break-all md:block"
+                title={mapping.longUrl}
+              >
+                {truncateUrl(mapping.longUrl, 100)}
+              </p>
+              <p className="text-muted-foreground shrink-0 text-xs lg:ml-auto">
                 Created {createdAtLabel}
               </p>
             </div>
