@@ -2,8 +2,8 @@ import { Copy, ExternalLink } from 'lucide-react';
 
 interface UrlMapping {
   id: string;
-  originalUrl: string;
-  shortCode: string;
+  longUrl: string;
+  shortUrl: string;
   createdAt: number;
   title?: string;
   clicks?: number;
@@ -14,9 +14,14 @@ interface ShortenedUrlProps {
 }
 
 export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
-  const shortUrl = `${window.location.origin}/${mapping.shortCode}`;
+  const shortUrl = `${window.location.origin}/${mapping.shortUrl}`;
+  const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    hour12: true,
+  });
 
-  const truncateUrl = (url: string, maxLength: number = 50) => {
+  const truncateUrl = (url: string, maxLength: number = 80) => {
     if (url.length <= maxLength) return url;
     return url.substring(0, maxLength) + '...';
   };
@@ -37,47 +42,52 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         <div className="flex items-center gap-3">
           <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-3">
             <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
-            <p className="text-primary font-mono font-semibold break-all">
-              {shortUrl}
-            </p>
-          </div>
-          <button
-            className="bg-accent hover:bg-accent/80 shrink-0 rounded-lg p-3 transition-colors"
-            title="Copy action will be added during integration"
-            type="button"
-          >
-            <Copy className="text-primary h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Original URL */}
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
-            <p className="text-muted-foreground mb-1 text-sm">Original URL</p>
             <div className="flex items-center gap-2">
-              <p
-                className="text-card-foreground text-sm break-all"
-                title={mapping.originalUrl}
-              >
-                {truncateUrl(mapping.originalUrl, 60)}
-              </p>
               <a
-                href={mapping.originalUrl}
+                href={shortUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 font-mono font-semibold break-all transition-colors"
+                title={shortUrl}
+              >
+                {shortUrl}
+              </a>
+              <a
+                href={shortUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary shrink-0 transition-colors"
+                title="Open short URL"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
             </div>
           </div>
+          <button
+            className="bg-accent hover:bg-primary group shrink-0 cursor-pointer rounded-lg p-3 transition-colors"
+            title="Copy action will be added during integration"
+            type="button"
+          >
+            <Copy className="text-primary h-5 w-5 transition-colors group-hover:text-white" />
+          </button>
         </div>
 
-        {/* Metadata */}
-        <div className="border-border border-t pt-2">
-          <p className="text-muted-foreground text-xs">
-            Created {new Date(mapping.createdAt).toLocaleString()}
-          </p>
+        {/* Long URL */}
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <p className="text-muted-foreground mb-1 text-sm">Long URL</p>
+            <div className="flex items-center gap-2">
+              <p
+                className="text-card-foreground text-sm break-all"
+                title={mapping.longUrl}
+              >
+                {truncateUrl(mapping.longUrl, 90)}
+              </p>
+              <p className="text-muted-foreground ml-auto shrink-0 text-xs">
+                Created {createdAtLabel}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
