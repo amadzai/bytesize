@@ -141,30 +141,31 @@ export function Home() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-foreground text-lg font-semibold md:text-xl">
-          Your recent URLs
-        </h2>
-
         {recentUrls.length === 0 ? (
           <div className="text-muted-foreground text-center text-xs md:text-base">
             <p>No shortened URLs yet. Create your first one above!</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {recentUrls.map((item) => (
-              <ShortenedUrl
-                key={item.short_url}
-                mapping={{
-                  id: item.short_url,
-                  longUrl: item.target_url,
-                  shortUrl: item.short_url,
-                  createdAt: item.created_at,
-                  title: item.title ?? undefined,
-                }}
-                onDelete={handleDeleteRecentUrl}
-              />
-            ))}
-          </div>
+          <>
+            <h2 className="text-foreground text-lg font-semibold md:text-xl">
+              Your recent URLs
+            </h2>
+            <div className="space-y-4">
+              {recentUrls.map((item) => (
+                <ShortenedUrl
+                  key={item.short_url}
+                  mapping={{
+                    id: item.short_url,
+                    longUrl: item.target_url,
+                    shortUrl: item.short_url,
+                    createdAt: item.created_at,
+                    title: item.title ?? undefined,
+                  }}
+                  onDelete={handleDeleteRecentUrl}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
