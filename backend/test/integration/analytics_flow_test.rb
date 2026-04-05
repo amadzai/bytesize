@@ -53,7 +53,7 @@ class AnalyticsFlowTest < ActionDispatch::IntegrationTest
     assert_equal "Short URL not found", body["error"]
   end
 
-  test "index rate limits after 60 requests per minute per ip" do
+  test "index rate limits after 120 requests per minute per ip" do
     Rails.cache.clear
 
     url = Url.create!(
@@ -63,7 +63,7 @@ class AnalyticsFlowTest < ActionDispatch::IntegrationTest
     )
     url.analytics.create!(location: "Unknown")
 
-    60.times do
+    120.times do
       get "/urls/#{url.short_url}/analytics", headers: { "REMOTE_ADDR" => "203.0.113.11" }
       assert_response :success
     end

@@ -1,5 +1,5 @@
 class AnalyticsController < ApplicationController
-  rate_limit to: 60, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
+  rate_limit to: 120, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
 
   def index
     url = Url.find_by!(short_url: params[:short_url])
