@@ -1,5 +1,5 @@
 module Analytics
-  class TrackVisitLocationJob < ApplicationJob
+  class TrackVisitJob < ApplicationJob
     queue_as :default
 
     discard_on ActiveRecord::RecordInvalid, ActiveRecord::InvalidForeignKey
