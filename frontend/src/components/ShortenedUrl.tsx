@@ -36,7 +36,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         {mapping.title && (
           <div className="min-w-0">
             <h3
-              className="text-card-foreground truncate text-sm font-semibold md:text-base"
+              className="text-card-foreground truncate text-base font-semibold"
               title={mapping.title}
             >
               {mapping.title}
