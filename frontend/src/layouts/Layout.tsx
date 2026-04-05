@@ -1,5 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { BarChart3 } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 
 interface LayoutProps {
@@ -9,6 +10,32 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: {
+            style: {
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
+            },
+            iconTheme: {
+              primary: 'var(--primary-foreground)',
+              secondary: 'var(--primary)',
+            },
+          },
+          error: {
+            style: {
+              background: 'var(--error)',
+              color: 'var(--primary-foreground)',
+            },
+            iconTheme: {
+              primary: 'var(--primary-foreground)',
+              secondary: 'var(--error)',
+            },
+          },
+        }}
+      />
+
       {/* Header */}
       <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur-sm">
         <div className="container mx-auto max-w-5xl px-4 py-4">
