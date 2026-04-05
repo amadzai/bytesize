@@ -3,7 +3,6 @@ import {
   BarChart3,
   ChevronDown,
   ChevronRight,
-  ExternalLink,
   Eye,
   MapPin,
 } from 'lucide-react';
@@ -24,9 +23,88 @@ interface UrlMapping {
   visits: Visit[];
 }
 
+const mockUrls: UrlMapping[] = [
+  {
+    id: 'url-1',
+    title: 'Spring Launch Campaign',
+    longUrl:
+      'https://www.example.com/blog/spring-launch-campaign-announcement-and-feature-breakdown',
+    shortUrl: 'sprng26',
+    createdAt: 1712311200000,
+    clicks: 14,
+    visits: [
+      {
+        id: 'visit-1',
+        timestamp: 1712314800000,
+        location: 'San Francisco, CA',
+      },
+      {
+        id: 'visit-2',
+        timestamp: 1712318400000,
+        location: 'New York, NY',
+      },
+      {
+        id: 'visit-3',
+        timestamp: 1712322000000,
+        location: 'London, UK',
+      },
+    ],
+  },
+  {
+    id: 'url-2',
+    title: 'React Effects Guide',
+    longUrl: 'https://react.dev/learn/you-might-not-need-an-effect',
+    shortUrl: 'rctfx',
+    createdAt: 1712293200000,
+    clicks: 9,
+    visits: [
+      {
+        id: 'visit-4',
+        timestamp: 1712296800000,
+        location: 'Berlin, Germany',
+      },
+      {
+        id: 'visit-5',
+        timestamp: 1712300400000,
+        location: 'Toronto, Canada',
+      },
+    ],
+  },
+  {
+    id: 'url-3',
+    title: 'Tailwind Responsive Design',
+    longUrl: 'https://tailwindcss.com/docs/responsive-design',
+    shortUrl: 'twrsp',
+    createdAt: 1712221200000,
+    clicks: 5,
+    visits: [
+      {
+        id: 'visit-6',
+        timestamp: 1712224800000,
+        location: 'Tokyo, Japan',
+      },
+    ],
+  },
+  {
+    id: 'url-4',
+    title: 'Q2 Internal Playbook',
+    longUrl: 'https://docs.example.com/internal/q2-playbook',
+    shortUrl: 'q2pb',
+    createdAt: 1712134800000,
+    clicks: 0,
+    visits: [],
+  },
+];
+
 export function Analytics() {
   const [expandedUrls, setExpandedUrls] = useState<Set<string>>(new Set());
-  const urls: UrlMapping[] = [];
+  const urls = mockUrls;
+  const formatTimestamp = (timestamp: number) =>
+    new Date(timestamp).toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      hour12: true,
+    });
 
   const sortedUrls = [...urls].sort((a, b) => b.clicks - a.clicks);
   const urlsCount = sortedUrls.length;
@@ -48,7 +126,7 @@ export function Analytics() {
   return (
     <div className="container mx-auto max-w-5xl px-6 py-12 md:px-4">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="mb-4 flex items-center gap-3">
           <div className="bg-primary inline-flex h-12 w-12 items-center justify-center rounded-xl shadow-lg">
             <BarChart3 className="text-primary-foreground h-6 w-6" />
@@ -68,7 +146,7 @@ export function Analytics() {
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="border-border bg-card rounded-xl border p-6 shadow-md">
           <p className="text-muted-foreground mb-1 text-sm">Total URLs</p>
-          <p className="text-card-foreground text-3xl font-bold">{urlsCount}</p>
+          <p className="text-primary text-3xl font-bold">{urlsCount}</p>
         </div>
         <div className="border-border bg-card rounded-xl border p-6 shadow-md">
           <p className="text-muted-foreground mb-1 text-sm">Total Clicks</p>
@@ -78,9 +156,7 @@ export function Analytics() {
           <p className="text-muted-foreground mb-1 text-sm">
             Avg. Clicks per URL
           </p>
-          <p className="text-accent-foreground text-3xl font-bold">
-            {averageClicks}
-          </p>
+          <p className="text-primary text-3xl font-bold">{averageClicks}</p>
         </div>
       </div>
 
@@ -97,11 +173,11 @@ export function Analytics() {
                 className="border-border bg-card overflow-hidden rounded-xl border shadow-md"
               >
                 <div className="p-4 md:p-6">
-                  <div className="mb-3 flex items-start justify-between gap-3 md:gap-4">
+                  <div className="flex items-start justify-between gap-3 md:gap-4">
                     <div className="min-w-0 flex-1">
                       {url.title && (
                         <h3
-                          className="text-card-foreground mb-2 truncate text-base font-semibold md:text-lg"
+                          className="text-card-foreground mb-2 truncate text-base font-semibold"
                           title={url.title}
                         >
                           {url.title}
@@ -109,39 +185,46 @@ export function Analytics() {
                       )}
 
                       <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <span className="text-muted-foreground shrink-0 pt-0.5 text-xs md:text-sm">
-                            Target:
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className="text-muted-foreground shrink-0 text-xs md:text-sm">
+                            Short URL:
+                          </span>
+                          <a
+                            href={shortUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-primary/80 block min-w-0 flex-1 truncate text-xs md:text-sm"
+                            title={shortUrl}
+                          >
+                            {shortUrl}
+                          </a>
+                        </div>
+
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className="text-muted-foreground shrink-0 text-xs md:text-sm">
+                            Long URL:
                           </span>
                           <a
                             href={url.longUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 inline-flex min-w-0 items-center gap-1 text-xs md:text-sm"
+                            className="text-primary hover:text-primary/80 block min-w-0 flex-1 truncate text-xs md:text-sm"
                             title={url.longUrl}
                           >
-                            <span className="truncate">{url.longUrl}</span>
-                            <ExternalLink className="h-3 w-3 shrink-0 md:h-4 md:w-4" />
+                            {url.longUrl}
                           </a>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <span className="text-muted-foreground shrink-0 pt-0.5 text-xs md:text-sm">
-                            Short URL:
-                          </span>
-                          <span className="text-primary font-mono text-xs md:text-sm">
-                            {shortUrl}
-                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="shrink-0 text-center">
-                      <div className="text-primary flex items-center gap-1 text-xl font-bold md:text-2xl">
+                    <div className="shrink-0 text-right">
+                      <div className="text-primary flex items-center justify-end gap-1 text-lg font-bold md:text-2xl">
                         <Eye className="h-4 w-4 md:h-5 md:w-5" />
                         {url.clicks}
                       </div>
-                      <p className="text-muted-foreground text-xs">clicks</p>
+                      <p className="text-muted-foreground ml-auto w-fit text-xs">
+                        clicks
+                      </p>
                     </div>
                   </div>
 
@@ -186,7 +269,7 @@ export function Analytics() {
                             </span>
                           </div>
                           <div className="text-muted-foreground text-xs md:text-sm">
-                            {new Date(visit.timestamp).toLocaleString()}
+                            {formatTimestamp(visit.timestamp)}
                           </div>
                         </div>
                       ))}

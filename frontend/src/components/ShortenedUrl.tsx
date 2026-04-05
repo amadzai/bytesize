@@ -54,7 +54,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
                   href={shortUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 block truncate font-mono text-sm font-semibold transition-colors md:text-base"
+                  className="text-primary hover:text-primary/80 block truncate text-sm font-semibold transition-colors md:text-base"
                   title={shortUrl}
                 >
                   {shortUrl}
