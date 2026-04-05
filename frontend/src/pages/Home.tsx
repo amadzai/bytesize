@@ -1,35 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'lucide-react';
 import icon from '../assets/icon.png';
-import { ShortenedUrl } from '../components/ShortenedUrl';
-
-const mockUrls = [
-  {
-    id: '1',
-    longUrl:
-      'https://www.example.com/blog/how-to-build-a-scalable-url-shortener-system',
-    shortUrl: 'a1b2c3a1b2c3a1b2c3a1b2c3a1b2c3',
-    createdAt: 1712311200000,
-    title: 'URL Shortener Architecture Guide',
-    clicks: 42,
-  },
-  {
-    id: '2',
-    longUrl: 'https://react.dev/learn/you-might-not-need-an-effect',
-    shortUrl: 'react7',
-    createdAt: 1712293200000,
-    title: 'React Docs - Effects',
-    clicks: 18,
-  },
-  {
-    id: '3',
-    longUrl: 'https://tailwindcss.com/docs/responsive-design#overview',
-    shortUrl: 'twresp',
-    createdAt: 1712221200000,
-    title: 'Tailwind Responsive Design',
-    clicks: 7,
-  },
-];
 
 const isValidHttpUrl = (value: string) => {
   try {
@@ -43,7 +14,6 @@ const isValidHttpUrl = (value: string) => {
 export function Home() {
   const [url, setUrl] = useState('');
   const [urlError, setUrlError] = useState('');
-  const urlsCount = mockUrls.length;
   const isLoading = false;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,17 +86,9 @@ export function Home() {
           Your recent URLs
         </h2>
 
-        {urlsCount === 0 ? (
-          <div className="text-muted-foreground text-center text-xs md:text-base">
-            <p>No shortened URLs yet. Create your first one above!</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {mockUrls.map((mapping) => (
-              <ShortenedUrl key={mapping.id} mapping={mapping} />
-            ))}
-          </div>
-        )}
+        <div className="text-muted-foreground text-center text-xs md:text-base">
+          <p>No shortened URLs yet. Create your first one above!</p>
+        </div>
       </div>
     </div>
   );
