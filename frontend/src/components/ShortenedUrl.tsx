@@ -40,7 +40,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         {/* Title */}
         {mapping.title && (
           <div>
-            <h3 className="text-card-foreground font-semibold">
+            <h3 className="text-card-foreground text-sm font-semibold md:text-base">
               {mapping.title}
             </h3>
           </div>
@@ -49,13 +49,15 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         {/* Short URL */}
         <div className="flex items-center gap-3">
           <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-2">
-            <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
+            <p className="text-muted-foreground mb-1 text-xs md:text-sm">
+              Short URL
+            </p>
             <div className="flex items-center gap-2">
               <a
                 href={shortUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:text-primary/80 font-mono font-semibold break-all transition-colors"
+                className="text-primary hover:text-primary/80 font-mono text-sm font-semibold break-all transition-colors md:text-base"
                 title={shortUrl}
               >
                 {shortUrl}
