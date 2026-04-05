@@ -39,9 +39,8 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
     Record<string, string | number | null>
   >({});
   const [errorByUrl, setErrorByUrl] = useState<Record<string, string>>({});
-  const shortUrlBase = (
-    import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000'
-  ).replace(/\/$/, '');
+  const shortUrlBase =
+    import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000';
 
   const formatTimestamp = (timestamp: number) =>
     new Date(timestamp).toLocaleString(undefined, {
