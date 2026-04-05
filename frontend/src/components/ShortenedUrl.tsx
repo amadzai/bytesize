@@ -35,7 +35,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
   };
 
   return (
-    <div className="border-border bg-card rounded-xl border py-4 px-6 shadow-md transition-shadow hover:shadow-lg">
+    <div className="border-border bg-card rounded-xl border px-6 py-4 shadow-md transition-shadow hover:shadow-lg">
       <div className="space-y-3">
         {/* Title */}
         {mapping.title && (
@@ -72,17 +72,15 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
             </div>
           </div>
           <button
-            className={`group shrink-0 cursor-pointer rounded-lg p-3 transition-colors ${
-              copied ? 'bg-primary' : 'bg-accent hover:bg-primary'
-            }`}
+            className="shrink-0 cursor-pointer rounded-lg p-3 transition-colors"
             title={copied ? 'Copied' : 'Copy short URL'}
             type="button"
             onClick={handleCopy}
           >
             {copied ? (
-              <Check className="h-5 w-5 text-white" />
+              <Check className="text-primary h-5 w-5" />
             ) : (
-              <Copy className="text-primary h-5 w-5 transition-colors group-hover:text-white" />
+              <Copy className="text-primary h-5 w-5 transition-colors" />
             )}
           </button>
         </div>
