@@ -45,34 +45,29 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         )}
 
         {/* Short URL */}
-        <div className="flex min-w-0 items-center md:gap-3">
-          <div className="border-border bg-secondary min-w-0 flex-1 rounded-lg border px-2 py-2 md:px-4">
+        <div className="flex min-w-0 items-center md:gap-1">
+          <a
+            href={shortUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border bg-secondary group min-w-0 flex-1 rounded-lg border px-2 py-2 transition-colors hover:opacity-95 md:px-4"
+            title={shortUrl}
+          >
             <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
             <div className="flex min-w-0 items-center gap-2">
-              <div className="min-w-0 flex-1">
-                <a
-                  href={shortUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 block truncate text-sm font-semibold transition-colors md:text-base"
-                  title={shortUrl}
-                >
-                  {shortUrl}
-                </a>
+              <div className="text-primary group-hover:text-primary/80 block min-w-0 flex-1 truncate text-sm font-semibold transition-colors md:text-base">
+                {shortUrl}
               </div>
-              <a
-                href={shortUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary shrink-0 transition-colors"
-                title="Open short URL"
+              <div
+                className="text-muted-foreground group-hover:text-primary shrink-0 transition-colors"
+                aria-hidden="true"
               >
                 <ExternalLink className="h-3 w-3 md:h-4 md:w-4" />
-              </a>
+              </div>
             </div>
-          </div>
+          </a>
           <button
-            className="shrink-0 cursor-pointer rounded-lg pl-3 transition-colors md:p-3"
+            className="group shrink-0 cursor-pointer rounded-lg pl-3 transition-colors md:p-3"
             title={copied ? 'Copied' : 'Copy short URL'}
             type="button"
             onClick={handleCopy}
@@ -80,7 +75,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
             {copied ? (
               <Check className="text-primary h-5 w-5" />
             ) : (
-              <Copy className="text-primary h-5 w-5 transition-colors" />
+              <Copy className="text-primary group-hover:text-primary/80 h-5 w-5 transition-colors" />
             )}
           </button>
         </div>
