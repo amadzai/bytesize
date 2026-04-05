@@ -35,7 +35,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
   };
 
   return (
-    <div className="border-border bg-card rounded-xl border p-6 shadow-md transition-shadow hover:shadow-lg">
+    <div className="border-border bg-card rounded-xl border py-4 px-6 shadow-md transition-shadow hover:shadow-lg">
       <div className="space-y-3">
         {/* Title */}
         {mapping.title && (
@@ -48,7 +48,7 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
 
         {/* Short URL */}
         <div className="flex items-center gap-3">
-          <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-3">
+          <div className="border-border bg-secondary flex-1 rounded-lg border px-4 py-2">
             <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
             <div className="flex items-center gap-2">
               <a
