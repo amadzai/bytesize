@@ -16,7 +16,9 @@ interface ShortenedUrlProps {
 
 export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
   const [copied, setCopied] = useState(false);
-  const shortUrl = `${window.location.origin}/${mapping.shortUrl}`;
+  const backendBaseUrl =
+    import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000';
+  const shortUrl = `${backendBaseUrl}/urls/${mapping.shortUrl}`;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',

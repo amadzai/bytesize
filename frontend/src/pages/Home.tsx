@@ -1,6 +1,11 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'lucide-react';
 import icon from '../assets/icon.png';
+import { ShortenedUrl } from '../components/ShortenedUrl';
+import { urlApi } from '../api/urlApi';
+import { addRecentUrl, readRecentUrls } from '../utils/recentUrlsStorage';
+import type { ApiErrorResponse, RecentUrlItem } from '../types/urls';
 
 const isValidHttpUrl = (value: string) => {
   try {
@@ -14,9 +19,29 @@ const isValidHttpUrl = (value: string) => {
 export function Home() {
   const [url, setUrl] = useState('');
   const [urlError, setUrlError] = useState('');
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
+  const [recentUrls, setRecentUrls] = useState<RecentUrlItem[]>(() =>
+    readRecentUrls(),
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getErrorMessage = (error: unknown): string => {
+    if (axios.isAxiosError<ApiErrorResponse>(error)) {
+      const errors = error.response?.data?.errors;
+      const message = error.response?.data?.error;
+
+      if (errors?.length) {
+        return errors[0];
+      }
+
+      if (message) {
+        return message;
+      }
+    }
+
+    return 'Unable to shorten URL. Please try again.';
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isValidHttpUrl(url)) {
@@ -25,6 +50,19 @@ export function Home() {
     }
 
     setUrlError('');
+
+    try {
+      setIsLoading(true);
+      const response = await urlApi.shorten({ target_url: url.trim() });
+      const updatedRecentUrls = addRecentUrl(response);
+
+      setRecentUrls(updatedRecentUrls);
+      setUrl('');
+    } catch (error) {
+      setUrlError(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -86,9 +124,26 @@ export function Home() {
           Your recent URLs
         </h2>
 
-        <div className="text-muted-foreground text-center text-xs md:text-base">
-          <p>No shortened URLs yet. Create your first one above!</p>
-        </div>
+        {recentUrls.length === 0 ? (
+          <div className="text-muted-foreground text-center text-xs md:text-base">
+            <p>No shortened URLs yet. Create your first one above!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {recentUrls.map((item) => (
+              <ShortenedUrl
+                key={item.short_url}
+                mapping={{
+                  id: item.short_url,
+                  longUrl: item.target_url,
+                  shortUrl: item.short_url,
+                  createdAt: item.created_at,
+                  title: item.title ?? undefined,
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
