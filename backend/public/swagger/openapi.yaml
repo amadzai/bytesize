@@ -196,11 +196,15 @@ components:
           description: Number of redirect hits recorded
     UrlListPagination:
       type: object
-      required: [page]
+      required: [page, count]
       properties:
         page:
           type: integer
           description: Current page number
+        count:
+          type: integer
+          minimum: 0
+          description: Total number of URLs across all pages
         previous:
           type: integer
           nullable: true
@@ -219,12 +223,16 @@ components:
           description: URL to the next page when available
     UrlListResponse:
       type: object
-      required: [data, pagination]
+      required: [data, total_click_count, pagination]
       properties:
         data:
           type: array
           items:
             $ref: "#/components/schemas/UrlItem"
+        total_click_count:
+          type: integer
+          minimum: 0
+          description: Sum of click counts across all shortened URLs
         pagination:
           $ref: "#/components/schemas/UrlListPagination"
     AnalyticsItem:
