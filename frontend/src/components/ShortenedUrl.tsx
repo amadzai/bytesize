@@ -45,19 +45,21 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
         )}
 
         {/* Short URL */}
-        <div className="flex items-center md:gap-3">
-          <div className="border-border bg-secondary flex-1 rounded-lg border px-2 py-2 md:px-4">
+        <div className="flex min-w-0 items-center md:gap-3">
+          <div className="border-border bg-secondary min-w-0 flex-1 rounded-lg border px-2 py-2 md:px-4">
             <p className="text-muted-foreground mb-1 text-sm">Short URL</p>
-            <div className="flex items-center gap-2">
-              <a
-                href={shortUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:text-primary/80 font-mono text-sm font-semibold break-all transition-colors md:text-base"
-                title={shortUrl}
-              >
-                {shortUrl}
-              </a>
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <a
+                  href={shortUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 block truncate font-mono text-sm font-semibold transition-colors md:text-base"
+                  title={shortUrl}
+                >
+                  {shortUrl}
+                </a>
+              </div>
               <a
                 href={shortUrl}
                 target="_blank"
