@@ -1,14 +1,14 @@
 export interface AnalyticsItem {
   id: string;
   url_id: string;
-  location: string;
+  location: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface AnalyticsPagination {
-  next: unknown | null;
-  page: number;
+  next: string | number | null;
+  page: string | number;
   limit: number;
   has_more: boolean;
 }

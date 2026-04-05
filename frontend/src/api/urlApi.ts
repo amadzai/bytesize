@@ -27,9 +27,16 @@ export const urlApi = {
     return data;
   },
 
-  async analytics(shortUrl: string): Promise<UrlAnalyticsResponse> {
+  async analytics(
+    shortUrl: string,
+    cursor?: string | number | null,
+  ): Promise<UrlAnalyticsResponse> {
+    const params =
+      cursor === undefined || cursor === null ? undefined : { page: cursor };
+
     const { data } = await client.get<UrlAnalyticsResponse>(
       `/urls/${shortUrl}/analytics`,
+      { params },
     );
     return data;
   },
