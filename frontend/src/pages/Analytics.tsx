@@ -232,17 +232,14 @@ export function Analytics() {
             Retry
           </button>
         </div>
+      ) : sortedUrls.length > 0 ? (
+        <AnalyticsUrlList urls={sortedUrls} />
       ) : isLoading ? (
         <div className="border-border bg-card rounded-xl border p-8 text-center shadow-md">
           <p className="text-muted-foreground text-sm md:text-base">
             Loading analytics...
           </p>
         </div>
-      ) : sortedUrls.length > 0 ? (
-        <AnalyticsUrlList
-          key={currentPageUrl ?? `page-${pagination?.page ?? 1}`}
-          urls={sortedUrls}
-        />
       ) : (
         <div className="border-border bg-card rounded-xl border p-12 text-center shadow-md">
           <BarChart3 className="text-muted-foreground mx-auto mb-4 h-16 w-16" />
