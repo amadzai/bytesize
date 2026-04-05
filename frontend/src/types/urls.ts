@@ -18,10 +18,12 @@ export interface UrlListItem {
   short_url: string;
   title: string | null;
   click_count: number;
+  created_at: string;
 }
 
 export interface UrlsPagination {
   page: number;
+  count: number;
   previous: number | null;
   next: number | null;
   previous_url: string | null;
@@ -30,6 +32,7 @@ export interface UrlsPagination {
 
 export interface ListUrlsResponse {
   data: UrlListItem[];
+  total_click_count: number;
   pagination: UrlsPagination;
 }
 
