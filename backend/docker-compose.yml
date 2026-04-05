@@ -8,6 +8,7 @@ services:
       RAILS_ENV: production
       SOLID_QUEUE_IN_PUMA: "true"
       BACKEND_DATABASE_PASSWORD: ${BACKEND_DATABASE_PASSWORD}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
       PGHOST: db
       PGPORT: 5432
     ports:
