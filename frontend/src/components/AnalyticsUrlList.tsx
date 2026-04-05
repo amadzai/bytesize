@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Eye, MapPin } from 'lucide-react';
 import { urlApi } from '../api/urlApi';
 import { getApiErrorMessage } from '../utils/errorMessages';
-import { BACKEND_BASE_URL } from '../utils/constants';
+import { BACKEND_REDIRECT_URL } from '../utils/constants';
 import type { AnalyticsUrlMapping, AnalyticsVisit } from '../types/analytics';
 
 interface UrlVisitState {
@@ -121,7 +121,7 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
     <div className="space-y-4">
       {urls.map((url) => {
         const isExpanded = expandedUrls.has(url.id);
-        const shortUrl = `${BACKEND_BASE_URL}/urls/${url.shortUrl}`;
+        const shortUrl = `${BACKEND_REDIRECT_URL}/urls/${url.shortUrl}`;
         const { visits, isLoading, hasLoaded, hasMore, nextCursor, error } =
           getVisitState(url.id);
         const canShowAnalytics = url.clicks > 0;

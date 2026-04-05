@@ -5,10 +5,10 @@ import type {
   ShortenUrlResponse,
 } from '../types/urls';
 import type { UrlAnalyticsResponse } from '../types/analytics';
-import { BACKEND_BASE_URL } from '../utils/constants';
+import { BACKEND_API_URL } from '../utils/constants';
 
 const client = axios.create({
-  baseURL: BACKEND_BASE_URL,
+  baseURL: BACKEND_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
