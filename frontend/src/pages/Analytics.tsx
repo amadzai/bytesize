@@ -143,7 +143,7 @@ export function Analytics() {
       return [1];
     }
 
-    if (pagination.page <= 1) {
+    if (pagination.page === 1) {
       const pages = [1];
       if (pagination.next_url) {
         pages.push(2);
@@ -154,19 +154,19 @@ export function Analytics() {
       return pages;
     }
 
-    if (pagination.previous_url && pagination.next_url) {
-      return [pagination.page - 1, pagination.page, pagination.page + 1];
+    if (pagination.page === 2) {
+      const pages = [1, 2];
+      if (pagination.next_url) {
+        pages.push(3);
+      }
+      return pages;
     }
 
-    if (!pagination.next_url) {
-      const start = Math.max(1, pagination.page - 2);
-      return Array.from(
-        { length: pagination.page - start + 1 },
-        (_, index) => start + index,
-      );
+    if (pagination.next_url) {
+      return [1, pagination.page - 1, pagination.page, pagination.page + 1];
     }
 
-    return [pagination.page, pagination.page + 1];
+    return [1, pagination.page - 1, pagination.page];
   }, [pagination, pageUrlByNumber]);
 
   const getPageUrl = (page: number): string | null | undefined => {
@@ -273,24 +273,33 @@ export function Analytics() {
                 isLoading || (!isCurrentPage && targetPageUrl === undefined);
 
               return (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => {
-                    if (!isCurrentPage) {
-                      setCurrentPageUrl(targetPageUrl ?? null);
+                <div key={page} className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isCurrentPage) {
+                        setCurrentPageUrl(targetPageUrl ?? null);
+                      }
+                    }}
+                    disabled={isDisabled}
+                    className={
+                      isCurrentPage
+                        ? 'bg-primary text-primary-foreground h-8 min-w-8 rounded-md px-2 text-sm font-medium'
+                        : 'border-border text-foreground h-8 min-w-8 cursor-pointer rounded-md border px-2 text-sm hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40'
                     }
-                  }}
-                  disabled={isDisabled}
-                  className={
-                    isCurrentPage
-                      ? 'bg-primary text-primary-foreground h-8 min-w-8 rounded-md px-2 text-sm font-medium'
-                      : 'border-border text-foreground h-8 min-w-8 cursor-pointer rounded-md border px-2 text-sm hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40'
-                  }
-                  aria-label={`Go to page ${page}`}
-                >
-                  {page}
-                </button>
+                    aria-label={`Go to page ${page}`}
+                  >
+                    {page}
+                  </button>
+                  {page === 1 && currentPage >= 3 ? (
+                    <span
+                      className="text-muted-foreground text-sm select-none"
+                      aria-hidden="true"
+                    >
+                      ..
+                    </span>
+                  ) : null}
+                </div>
               );
             })}
           </div>
