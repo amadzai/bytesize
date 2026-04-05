@@ -1,184 +1,19 @@
-import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
 import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  AnalyticsUrlList,
-  type AnalyticsUrlMapping,
-} from '../components/AnalyticsUrlList';
-import { urlApi } from '../api/urlApi';
-import type { ApiErrorResponse, UrlsPagination } from '../types/urls';
+import { AnalyticsUrlList } from '../components/AnalyticsUrlList';
+import { useAnalyticsData } from '../hooks/useAnalyticsData';
 
 export function Analytics() {
-  const [urls, setUrls] = useState<AnalyticsUrlMapping[]>([]);
-  const [pagination, setPagination] = useState<UrlsPagination | null>(null);
-  const [totalClicks, setTotalClicks] = useState(0);
-  const [currentPageUrl, setCurrentPageUrl] = useState<string | null>(null);
-  const [pageUrlByNumber, setPageUrlByNumber] = useState<
-    Partial<Record<number, string | null>>
-  >({
-    1: null,
-  });
-  const [retryCount, setRetryCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const getErrorMessage = (error: unknown): string => {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-      const errors = error.response?.data?.errors;
-      const message = error.response?.data?.error;
-
-      if (errors?.length) {
-        return errors[0];
-      }
-
-      if (message) {
-        return message;
-      }
-    }
-
-    return 'Unable to load analytics. Please try again.';
-  };
-
-  useEffect(() => {
-    let isActive = true;
-
-    const fetchPageData = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage('');
-
-        const response = await urlApi.list(currentPageUrl);
-        const mappedUrls: AnalyticsUrlMapping[] = response.data.map((item) => ({
-          id: item.short_url,
-          longUrl: item.target_url,
-          shortUrl: item.short_url,
-          createdAt: item.created_at ? Date.parse(item.created_at) : undefined,
-          title: item.title ?? undefined,
-          clicks: item.click_count,
-        }));
-
-        if (!isActive) {
-          return;
-        }
-
-        setUrls(mappedUrls);
-        setTotalClicks(response.total_click_count);
-        setPagination(response.pagination);
-        setPageUrlByNumber((previous) => {
-          const next = {
-            ...previous,
-            [response.pagination.page]: currentPageUrl,
-          };
-
-          if (response.pagination.previous_url) {
-            next[response.pagination.page - 1] =
-              response.pagination.previous_url;
-          }
-
-          if (response.pagination.next_url) {
-            next[response.pagination.page + 1] = response.pagination.next_url;
-          }
-
-          return next;
-        });
-
-        if (response.pagination.page === 1 && response.pagination.next_url) {
-          void urlApi
-            .list(response.pagination.next_url)
-            .then((nextPageResponse) => {
-              if (!isActive) {
-                return;
-              }
-
-              setPageUrlByNumber((previous) => {
-                if (previous[3] !== undefined) {
-                  return previous;
-                }
-
-                const next: Partial<Record<number, string | null>> = {
-                  ...previous,
-                  2: response.pagination.next_url,
-                };
-
-                if (nextPageResponse.pagination.next_url) {
-                  next[3] = nextPageResponse.pagination.next_url;
-                }
-
-                return next;
-              });
-            })
-            .catch(() => {});
-        }
-      } catch (error) {
-        if (!isActive) {
-          return;
-        }
-
-        setUrls([]);
-        setTotalClicks(0);
-        setPagination(null);
-        setErrorMessage(getErrorMessage(error));
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchPageData();
-
-    return () => {
-      isActive = false;
-    };
-  }, [currentPageUrl, retryCount]);
-
-  const sortedUrls = useMemo(
-    () => [...urls].sort((a, b) => b.clicks - a.clicks),
-    [urls],
-  );
-  const currentPage = pagination?.page ?? 1;
-  const visiblePages = useMemo(() => {
-    if (!pagination) {
-      return [1];
-    }
-
-    if (pagination.page === 1) {
-      const pages = [1];
-      if (pagination.next_url) {
-        pages.push(2);
-      }
-      if (pageUrlByNumber[3] !== undefined) {
-        pages.push(3);
-      }
-      return pages;
-    }
-
-    if (pagination.page === 2) {
-      const pages = [1, 2];
-      if (pagination.next_url) {
-        pages.push(3);
-      }
-      return pages;
-    }
-
-    if (pagination.next_url) {
-      return [1, pagination.page - 1, pagination.page, pagination.page + 1];
-    }
-
-    return [1, pagination.page - 1, pagination.page];
-  }, [pagination, pageUrlByNumber]);
-
-  const getPageUrl = (page: number): string | null | undefined => {
-    if (page === 1) {
-      return null;
-    }
-
-    return pageUrlByNumber[page];
-  };
-
-  const urlsCount = pagination?.count ?? sortedUrls.length;
-  const averageClicks = urlsCount > 0 ? Math.round(totalClicks / urlsCount) : 0;
+  const {
+    sortedUrls,
+    totalClicks,
+    urlsCount,
+    averageClicks,
+    isLoading,
+    errorMessage,
+    retry,
+    pagination,
+  } = useAnalyticsData();
 
   return (
     <div className="container mx-auto max-w-5xl px-6 py-12 md:px-4">
@@ -226,7 +61,7 @@ export function Analytics() {
           <button
             type="button"
             className="bg-primary text-primary-foreground cursor-pointer rounded-lg px-4 py-2 text-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={() => setRetryCount((count) => count + 1)}
+            onClick={retry}
             disabled={isLoading}
           >
             Retry
@@ -253,12 +88,12 @@ export function Analytics() {
       )}
 
       {/* Pagination */}
-      {(pagination?.previous_url || pagination?.next_url) && !errorMessage && (
+      {pagination && (
         <div className="mt-6 flex items-center justify-center gap-4">
           <button
             type="button"
-            onClick={() => setCurrentPageUrl(pagination.previous_url)}
-            disabled={!pagination.previous_url || isLoading}
+            onClick={pagination.goToPrevious}
+            disabled={!pagination.hasPrevious || isLoading}
             className="text-primary inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
             aria-label="Previous page"
           >
@@ -266,22 +101,15 @@ export function Analytics() {
           </button>
 
           <div className="flex items-center gap-2">
-            {visiblePages.map((page) => {
-              const isCurrentPage = page === currentPage;
-              const targetPageUrl = getPageUrl(page);
-              const isDisabled =
-                isLoading || (!isCurrentPage && targetPageUrl === undefined);
+            {pagination.visiblePages.map((page) => {
+              const isCurrentPage = page === pagination.currentPage;
 
               return (
                 <div key={page} className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      if (!isCurrentPage) {
-                        setCurrentPageUrl(targetPageUrl ?? null);
-                      }
-                    }}
-                    disabled={isDisabled}
+                    onClick={() => pagination.goToPage(page)}
+                    disabled={!pagination.canGoToPage(page)}
                     className={
                       isCurrentPage
                         ? 'bg-primary text-primary-foreground h-8 min-w-8 rounded-md px-2 text-sm font-medium'
@@ -291,7 +119,7 @@ export function Analytics() {
                   >
                     {page}
                   </button>
-                  {page === 1 && currentPage >= 3 ? (
+                  {page === 1 && pagination.currentPage >= 3 ? (
                     <span
                       className="text-muted-foreground text-sm select-none"
                       aria-hidden="true"
@@ -306,8 +134,8 @@ export function Analytics() {
 
           <button
             type="button"
-            onClick={() => setCurrentPageUrl(pagination.next_url)}
-            disabled={!pagination.next_url || isLoading}
+            onClick={pagination.goToNext}
+            disabled={!pagination.hasNext || isLoading}
             className="text-primary inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
             aria-label="Next page"
           >

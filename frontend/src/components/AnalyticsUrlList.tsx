@@ -1,23 +1,26 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Eye, MapPin } from 'lucide-react';
 import { urlApi } from '../api/urlApi';
-import type { ApiErrorResponse } from '../types/urls';
+import { getApiErrorMessage } from '../utils/errorMessages';
+import { BACKEND_BASE_URL } from '../utils/constants';
+import type { AnalyticsUrlMapping, AnalyticsVisit } from '../types/analytics';
 
-export interface AnalyticsVisit {
-  id: string;
-  timestamp: number;
-  location: string;
+interface UrlVisitState {
+  visits: AnalyticsVisit[];
+  isLoading: boolean;
+  hasLoaded: boolean;
+  hasMore: boolean;
+  nextCursor: string | number | null;
+  error?: string;
 }
 
-export interface AnalyticsUrlMapping {
-  id: string;
-  longUrl: string;
-  shortUrl: string;
-  createdAt?: number;
-  title?: string;
-  clicks: number;
-}
+const defaultVisitState: UrlVisitState = {
+  visits: [],
+  isLoading: false,
+  hasLoaded: false,
+  hasMore: false,
+  nextCursor: null,
+};
 
 interface AnalyticsUrlListProps {
   urls: AnalyticsUrlMapping[];
@@ -25,22 +28,9 @@ interface AnalyticsUrlListProps {
 
 export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
   const [expandedUrls, setExpandedUrls] = useState<Set<string>>(new Set());
-  const [visitsByUrl, setVisitsByUrl] = useState<
-    Record<string, AnalyticsVisit[]>
+  const [visitStateByUrl, setVisitStateByUrl] = useState<
+    Record<string, UrlVisitState>
   >({});
-  const [isLoadingByUrl, setIsLoadingByUrl] = useState<Record<string, boolean>>(
-    {},
-  );
-  const [hasLoadedByUrl, setHasLoadedByUrl] = useState<Record<string, boolean>>(
-    {},
-  );
-  const [hasMoreByUrl, setHasMoreByUrl] = useState<Record<string, boolean>>({});
-  const [nextCursorByUrl, setNextCursorByUrl] = useState<
-    Record<string, string | number | null>
-  >({});
-  const [errorByUrl, setErrorByUrl] = useState<Record<string, string>>({});
-  const shortUrlBase =
-    import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000';
 
   const formatTimestamp = (timestamp: number) =>
     new Date(timestamp).toLocaleString(undefined, {
@@ -49,21 +39,14 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
       hour12: true,
     });
 
-  const getErrorMessage = (error: unknown): string => {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-      const errors = error.response?.data?.errors;
-      const message = error.response?.data?.error;
+  const getVisitState = (urlId: string): UrlVisitState =>
+    visitStateByUrl[urlId] ?? defaultVisitState;
 
-      if (errors?.length) {
-        return errors[0];
-      }
-
-      if (message) {
-        return message;
-      }
-    }
-
-    return 'Unable to load visit analytics. Please try again.';
+  const updateVisitState = (urlId: string, update: Partial<UrlVisitState>) => {
+    setVisitStateByUrl((previous) => ({
+      ...previous,
+      [urlId]: { ...getVisitState(urlId), ...previous[urlId], ...update },
+    }));
   };
 
   const loadVisits = async (
@@ -72,8 +55,9 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
   ) => {
     const cursor = options?.cursor;
     const append = options?.append ?? false;
+    const state = getVisitState(url.id);
 
-    if (isLoadingByUrl[url.id]) {
+    if (state.isLoading) {
       return;
     }
 
@@ -81,12 +65,7 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
       return;
     }
 
-    setIsLoadingByUrl((previous) => ({ ...previous, [url.id]: true }));
-    setErrorByUrl((previous) => {
-      const next = { ...previous };
-      delete next[url.id];
-      return next;
-    });
+    updateVisitState(url.id, { isLoading: true, error: undefined });
 
     try {
       const response = await urlApi.analytics(url.shortUrl, cursor);
@@ -96,28 +75,29 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
         location: visit.location || 'Unknown location',
       }));
 
-      setVisitsByUrl((previous) => ({
-        ...previous,
-        [url.id]: append
-          ? [...(previous[url.id] ?? []), ...mappedVisits]
-          : mappedVisits,
-      }));
-      setNextCursorByUrl((previous) => ({
-        ...previous,
-        [url.id]: response.pagination.next,
-      }));
-      setHasMoreByUrl((previous) => ({
-        ...previous,
-        [url.id]: response.pagination.has_more,
-      }));
-      setHasLoadedByUrl((previous) => ({ ...previous, [url.id]: true }));
+      setVisitStateByUrl((previous) => {
+        const current = previous[url.id] ?? defaultVisitState;
+        return {
+          ...previous,
+          [url.id]: {
+            visits: append
+              ? [...current.visits, ...mappedVisits]
+              : mappedVisits,
+            isLoading: false,
+            hasLoaded: true,
+            hasMore: response.pagination.has_more,
+            nextCursor: response.pagination.next,
+          },
+        };
+      });
     } catch (error) {
-      setErrorByUrl((previous) => ({
-        ...previous,
-        [url.id]: getErrorMessage(error),
-      }));
-    } finally {
-      setIsLoadingByUrl((previous) => ({ ...previous, [url.id]: false }));
+      updateVisitState(url.id, {
+        isLoading: false,
+        error: getApiErrorMessage(
+          error,
+          'Unable to load visit analytics. Please try again.',
+        ),
+      });
     }
   };
 
@@ -132,7 +112,7 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
       return next;
     });
 
-    if (!hasLoadedByUrl[url.id]) {
+    if (!getVisitState(url.id).hasLoaded) {
       void loadVisits(url);
     }
   };
@@ -141,13 +121,9 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
     <div className="space-y-4">
       {urls.map((url) => {
         const isExpanded = expandedUrls.has(url.id);
-        const shortUrl = `${shortUrlBase}/urls/${url.shortUrl}`;
-        const visits = visitsByUrl[url.id] ?? [];
-        const isLoading = isLoadingByUrl[url.id] ?? false;
-        const hasLoaded = hasLoadedByUrl[url.id] ?? false;
-        const hasMore = hasMoreByUrl[url.id] ?? false;
-        const nextCursor = nextCursorByUrl[url.id];
-        const error = errorByUrl[url.id];
+        const shortUrl = `${BACKEND_BASE_URL}/urls/${url.shortUrl}`;
+        const { visits, isLoading, hasLoaded, hasMore, nextCursor, error } =
+          getVisitState(url.id);
         const canShowAnalytics = url.clicks > 0;
 
         return (
