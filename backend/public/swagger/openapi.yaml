@@ -78,7 +78,7 @@ paths:
                 $ref: "#/components/schemas/UrlListResponse"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
-  /urls/{short_url}:
+  /{short_url}:
     get:
       tags: [URLs]
       summary: Redirect to target URL
