@@ -6,7 +6,7 @@ export function Analytics() {
   const averageClicks = 0;
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-16">
+    <div className="container mx-auto max-w-5xl px-4 py-12 md:py-16">
       {/* Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
@@ -14,8 +14,10 @@ export function Analytics() {
             <BarChart3 className="text-primary-foreground h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-foreground text-3xl font-bold">Plaform Analytics</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-foreground text-xl font-bold md:text-3xl">
+              Plaform Analytics
+            </h1>
+            <p className="text-muted-foreground text-xs md:text-base">
               View all shortened URLs and their visit analytics
             </p>
           </div>

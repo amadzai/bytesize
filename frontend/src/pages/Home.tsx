@@ -12,9 +12,9 @@ export function Home() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 pt-28 pb-8">
+    <div className="container mx-auto max-w-5xl px-4 pt-12 pb-8 md:pt-28">
       {/* Header */}
-      <div className="mb-12 text-center">
+      <div className="mb-6 text-center md:mb-12">
         <div className="inline-flex h-20 w-32 items-center justify-center">
           <img
             src={icon}
@@ -22,14 +22,16 @@ export function Home() {
             className="h-full w-full object-contain"
           />
         </div>
-        <h1 className="text-foreground mb-2 text-5xl font-bold">bytesize</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-foreground mb-2 text-4xl font-bold md:text-5xl">
+          bytesize
+        </h1>
+        <p className="text-muted-foreground text-xs md:text-base">
           Transform long URLs into short, shareable links
         </p>
       </div>
 
       {/* Main Form Card */}
-      <div className="border-border bg-card mb-8 rounded-2xl border p-8 shadow-xl">
+      <div className="border-border bg-card mb-6 rounded-2xl border p-8 shadow-xl md:mb-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
@@ -60,7 +62,7 @@ export function Home() {
       </div>
 
       {urlsCount === 0 && (
-        <div className="text-muted-foreground py-4a text-center">
+        <div className="text-muted-foreground text-center text-xs md:text-base">
           <p>No shortened URLs yet. Create your first one above!</p>
         </div>
       )}

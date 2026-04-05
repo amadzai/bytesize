@@ -24,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
                   className="h-full w-full object-contain"
                 />
               </div>
-              <span className="text-foreground group-hover:text-primary text-2xl font-bold transition-colors">
+              <span className="text-foreground group-hover:text-primary text-lg font-bold transition-colors md:text-2xl">
                 bytesize
               </span>
             </RouterLink>
@@ -32,10 +32,10 @@ export function Layout({ children }: LayoutProps) {
             <nav className="flex items-center gap-4">
               <RouterLink
                 to="/history"
-                className="group flex items-center gap-2 py-2"
+                className="group flex items-center gap-1.5 py-2"
               >
                 <BarChart3 className="text-foreground group-hover:text-primary h-5 w-5 transition-colors" />
-                <span className="text-foreground group-hover:text-primary text-lg font-bold transition-colors">
+                <span className="text-foreground group-hover:text-primary text-md font-bold transition-colors md:text-lg">
                   Analytics
                 </span>
               </RouterLink>
@@ -49,11 +49,9 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Footer */}
       <footer className="bg-background/80 border-border border-t backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-muted-foreground text-center text-sm">
-            <p>
-              © {new Date().getFullYear()} Bytesize. All rights reserved.
-            </p>
+        <div className="container mx-auto px-4 py-4 md:py-8">
+          <div className="text-muted-foreground text-center text-xs md:text-sm">
+            <p>© {new Date().getFullYear()} Bytesize. All rights reserved.</p>
           </div>
         </div>
       </footer>
