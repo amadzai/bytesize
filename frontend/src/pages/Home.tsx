@@ -1,35 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 import { ShortenedUrl } from '../components/ShortenedUrl';
-
-const mockUrls = [
-  {
-    id: '1',
-    longUrl:
-      'https://www.example.com/blog/how-to-build-a-scalable-url-shortener-system',
-    shortUrl: 'a1b2c3a1b2c3a1b2c3a1b2c3a1b2c3',
-    createdAt: 1712311200000,
-    title: 'URL Shortener Architecture Guide',
-    clicks: 42,
-  },
-  {
-    id: '2',
-    longUrl: 'https://react.dev/learn/you-might-not-need-an-effect',
-    shortUrl: 'react7',
-    createdAt: 1712293200000,
-    title: 'React Docs - Effects',
-    clicks: 18,
-  },
-  {
-    id: '3',
-    longUrl: 'https://tailwindcss.com/docs/responsive-design#overview',
-    shortUrl: 'twresp',
-    createdAt: 1712221200000,
-    title: 'Tailwind Responsive Design',
-    clicks: 7,
-  },
-];
+import { urlApi } from '../api/urlApi';
+import {
+  addRecentUrl,
+  readRecentUrls,
+  writeRecentUrls,
+} from '../utils/recentUrlsStorage';
+import { getApiErrorMessage } from '../utils/errorMessages';
+import type { RecentUrlItem } from '../types/urls';
 
 const isValidHttpUrl = (value: string) => {
   try {
@@ -43,18 +24,52 @@ const isValidHttpUrl = (value: string) => {
 export function Home() {
   const [url, setUrl] = useState('');
   const [urlError, setUrlError] = useState('');
-  const urlsCount = mockUrls.length;
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
+  const [recentUrls, setRecentUrls] = useState<RecentUrlItem[]>(() =>
+    readRecentUrls(),
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isValidHttpUrl(url)) {
       setUrlError('Invalid URL');
+      toast.error('Invalid URL');
       return;
     }
 
     setUrlError('');
+
+    try {
+      setIsLoading(true);
+      const response = await urlApi.shorten({ target_url: url.trim() });
+      const updatedRecentUrls = addRecentUrl(response);
+
+      setRecentUrls(updatedRecentUrls);
+      setUrl('');
+      toast.success('URL shortened successfully');
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'Unable to shorten URL. Please try again.',
+      );
+      setUrlError(message);
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteRecentUrl = (id: string) => {
+    setRecentUrls((previousRecentUrls) => {
+      const updatedRecentUrls = previousRecentUrls.filter(
+        (item) => item.short_url !== id,
+      );
+      writeRecentUrls(updatedRecentUrls);
+      return updatedRecentUrls;
+    });
+
+    toast.success('Removed from recent URLs');
   };
 
   return (
@@ -112,20 +127,31 @@ export function Home() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-foreground text-lg font-semibold md:text-xl">
-          Your recent URLs
-        </h2>
-
-        {urlsCount === 0 ? (
+        {recentUrls.length === 0 ? (
           <div className="text-muted-foreground text-center text-xs md:text-base">
             <p>No shortened URLs yet. Create your first one above!</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {mockUrls.map((mapping) => (
-              <ShortenedUrl key={mapping.id} mapping={mapping} />
-            ))}
-          </div>
+          <>
+            <h2 className="text-foreground text-lg font-semibold md:text-xl">
+              Your recent URLs
+            </h2>
+            <div className="space-y-4">
+              {recentUrls.map((item) => (
+                <ShortenedUrl
+                  key={item.short_url}
+                  mapping={{
+                    id: item.short_url,
+                    longUrl: item.target_url,
+                    shortUrl: item.short_url,
+                    createdAt: item.created_at,
+                    title: item.title ?? undefined,
+                  }}
+                  onDelete={handleDeleteRecentUrl}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

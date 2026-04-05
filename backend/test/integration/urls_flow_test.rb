@@ -62,8 +62,18 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "index returns expected response shape with data and pagination" do
-    Url.create!(target_url: "https://example.com/a", short_url: "idx00001", title: "A")
-    Url.create!(target_url: "https://example.com/b", short_url: "idx00002", title: "B")
+    Url.create!(
+      target_url: "https://example.com/a",
+      short_url: "idx00001",
+      title: "A",
+      click_count: 3
+    )
+    Url.create!(
+      target_url: "https://example.com/b",
+      short_url: "idx00002",
+      title: "B",
+      click_count: 7
+    )
 
     get "/urls"
     assert_response :success
@@ -71,15 +81,19 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
 
     assert body.key?("data")
+    assert body.key?("total_click_count")
     assert body.key?("pagination")
     assert_kind_of Array, body["data"]
     assert_kind_of Hash, body["pagination"]
+    assert_equal Url.sum(:click_count), body["total_click_count"]
 
     first = body["data"].first
     assert first.key?("target_url")
     assert first.key?("short_url")
     assert first.key?("title")
     assert first.key?("click_count")
+    assert first.key?("created_at")
+    assert_nothing_raised { Time.iso8601(first["created_at"]) }
   end
 
   test "index rate limits after 60 requests per minute" do

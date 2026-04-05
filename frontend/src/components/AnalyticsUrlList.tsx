@@ -1,21 +1,26 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Eye, MapPin } from 'lucide-react';
+import { urlApi } from '../api/urlApi';
+import { getApiErrorMessage } from '../utils/errorMessages';
+import { BACKEND_BASE_URL } from '../utils/constants';
+import type { AnalyticsUrlMapping, AnalyticsVisit } from '../types/analytics';
 
-export interface AnalyticsVisit {
-  id: string;
-  timestamp: number;
-  location: string;
-}
-
-export interface AnalyticsUrlMapping {
-  id: string;
-  longUrl: string;
-  shortUrl: string;
-  createdAt: number;
-  title?: string;
-  clicks: number;
+interface UrlVisitState {
   visits: AnalyticsVisit[];
+  isLoading: boolean;
+  hasLoaded: boolean;
+  hasMore: boolean;
+  nextCursor: string | number | null;
+  error?: string;
 }
+
+const defaultVisitState: UrlVisitState = {
+  visits: [],
+  isLoading: false,
+  hasLoaded: false,
+  hasMore: false,
+  nextCursor: null,
+};
 
 interface AnalyticsUrlListProps {
   urls: AnalyticsUrlMapping[];
@@ -23,6 +28,9 @@ interface AnalyticsUrlListProps {
 
 export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
   const [expandedUrls, setExpandedUrls] = useState<Set<string>>(new Set());
+  const [visitStateByUrl, setVisitStateByUrl] = useState<
+    Record<string, UrlVisitState>
+  >({});
 
   const formatTimestamp = (timestamp: number) =>
     new Date(timestamp).toLocaleString(undefined, {
@@ -31,23 +39,92 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
       hour12: true,
     });
 
-  const toggleExpanded = (urlId: string) => {
+  const getVisitState = (urlId: string): UrlVisitState =>
+    visitStateByUrl[urlId] ?? defaultVisitState;
+
+  const updateVisitState = (urlId: string, update: Partial<UrlVisitState>) => {
+    setVisitStateByUrl((previous) => ({
+      ...previous,
+      [urlId]: { ...getVisitState(urlId), ...previous[urlId], ...update },
+    }));
+  };
+
+  const loadVisits = async (
+    url: AnalyticsUrlMapping,
+    options?: { cursor?: string | number | null; append?: boolean },
+  ) => {
+    const cursor = options?.cursor;
+    const append = options?.append ?? false;
+    const state = getVisitState(url.id);
+
+    if (state.isLoading) {
+      return;
+    }
+
+    if (append && (cursor === undefined || cursor === null)) {
+      return;
+    }
+
+    updateVisitState(url.id, { isLoading: true, error: undefined });
+
+    try {
+      const response = await urlApi.analytics(url.shortUrl, cursor);
+      const mappedVisits: AnalyticsVisit[] = response.data.map((visit) => ({
+        id: String(visit.id),
+        timestamp: Date.parse(visit.created_at),
+        location: visit.location || 'Unknown location',
+      }));
+
+      setVisitStateByUrl((previous) => {
+        const current = previous[url.id] ?? defaultVisitState;
+        return {
+          ...previous,
+          [url.id]: {
+            visits: append
+              ? [...current.visits, ...mappedVisits]
+              : mappedVisits,
+            isLoading: false,
+            hasLoaded: true,
+            hasMore: response.pagination.has_more,
+            nextCursor: response.pagination.next,
+          },
+        };
+      });
+    } catch (error) {
+      updateVisitState(url.id, {
+        isLoading: false,
+        error: getApiErrorMessage(
+          error,
+          'Unable to load visit analytics. Please try again.',
+        ),
+      });
+    }
+  };
+
+  const toggleExpanded = (url: AnalyticsUrlMapping) => {
     setExpandedUrls((prev) => {
       const next = new Set(prev);
-      if (next.has(urlId)) {
-        next.delete(urlId);
+      if (next.has(url.id)) {
+        next.delete(url.id);
       } else {
-        next.add(urlId);
+        next.add(url.id);
       }
       return next;
     });
+
+    if (!getVisitState(url.id).hasLoaded) {
+      void loadVisits(url);
+    }
   };
 
   return (
     <div className="space-y-4">
       {urls.map((url) => {
         const isExpanded = expandedUrls.has(url.id);
-        const shortUrl = `${window.location.origin}/${url.shortUrl}`;
+        const shortUrl = `${BACKEND_BASE_URL}/urls/${url.shortUrl}`;
+        const { visits, isLoading, hasLoaded, hasMore, nextCursor, error } =
+          getVisitState(url.id);
+        const canShowAnalytics = url.clicks > 0;
 
         return (
           <div
@@ -96,6 +173,15 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
                         {url.longUrl}
                       </a>
                     </div>
+
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="text-muted-foreground shrink-0 text-xs md:text-sm">
+                        Created:
+                      </span>
+                      <span className="text-card-foreground min-w-0 flex-1 truncate text-xs md:text-sm">
+                        {url.createdAt ? formatTimestamp(url.createdAt) : 'N/A'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -110,10 +196,10 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
                 </div>
               </div>
 
-              {url.visits.length > 0 && (
+              {canShowAnalytics && (
                 <button
-                  onClick={() => toggleExpanded(url.id)}
-                  className="text-primary hover:text-primary/80 mt-3 inline-flex items-center gap-2 text-xs font-medium md:text-sm"
+                  onClick={() => toggleExpanded(url)}
+                  className="text-primary hover:text-primary/80 mt-3 inline-flex cursor-pointer items-center gap-2 text-xs font-medium md:text-sm"
                   type="button"
                 >
                   {isExpanded ? (
@@ -124,22 +210,37 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
                   ) : (
                     <>
                       <ChevronRight className="h-4 w-4" />
-                      Show visit analytics ({url.visits.length} visits)
+                      Show visit analytics
                     </>
                   )}
                 </button>
               )}
             </div>
 
-            {isExpanded && url.visits.length > 0 && (
+            {isExpanded && canShowAnalytics && (
               <div className="border-border bg-secondary/30 border-t p-4 md:p-6">
                 <h4 className="text-card-foreground mb-4 inline-flex items-center gap-2 text-sm font-semibold md:text-base">
                   <MapPin className="h-4 w-4" />
                   Visit Analytics
                 </h4>
 
-                <div className="max-h-80 space-y-2 overflow-y-auto">
-                  {url.visits.map((visit) => (
+                <div
+                  className="max-h-80 space-y-2 overflow-y-auto"
+                  onScroll={(event) => {
+                    const element = event.currentTarget;
+                    const nearBottom =
+                      element.scrollTop + element.clientHeight >=
+                      element.scrollHeight - 40;
+
+                    if (nearBottom && hasMore && !isLoading) {
+                      void loadVisits(url, {
+                        cursor: nextCursor,
+                        append: true,
+                      });
+                    }
+                  }}
+                >
+                  {visits.map((visit) => (
                     <div
                       key={visit.id}
                       className="border-border bg-card flex items-center justify-between rounded-lg border p-3 md:p-4"
@@ -155,6 +256,42 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
                       </div>
                     </div>
                   ))}
+
+                  {isLoading && (
+                    <p className="text-muted-foreground px-1 py-2 text-xs md:text-sm">
+                      Loading visit analytics...
+                    </p>
+                  )}
+
+                  {error && (
+                    <div className="space-y-2 px-1 py-2">
+                      <p className="text-error text-xs md:text-sm">{error}</p>
+                      <button
+                        type="button"
+                        className="text-primary hover:text-primary/80 cursor-pointer text-xs font-medium md:text-sm"
+                        onClick={() =>
+                          void loadVisits(url, {
+                            cursor: hasLoaded ? nextCursor : undefined,
+                            append: hasLoaded,
+                          })
+                        }
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
+
+                  {!isLoading && hasLoaded && !error && visits.length === 0 && (
+                    <p className="text-muted-foreground px-1 py-2 text-xs md:text-sm">
+                      No visit analytics yet.
+                    </p>
+                  )}
+
+                  {!isLoading && hasMore && visits.length > 0 && (
+                    <p className="text-muted-foreground px-1 py-2 text-center text-xs md:text-sm">
+                      Scroll to load more
+                    </p>
+                  )}
                 </div>
               </div>
             )}
