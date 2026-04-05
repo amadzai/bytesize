@@ -22,8 +22,8 @@ export const urlApi = {
     return data;
   },
 
-  async list(): Promise<ListUrlsResponse> {
-    const { data } = await client.get<ListUrlsResponse>('/urls');
+  async list(pageUrl?: string | null): Promise<ListUrlsResponse> {
+    const { data } = await client.get<ListUrlsResponse>(pageUrl ?? '/urls');
     return data;
   },
 
