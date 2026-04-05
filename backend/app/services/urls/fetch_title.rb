@@ -4,7 +4,7 @@ module Urls
   class FetchTitle
     MAX_RETRIES = 3
     TIMEOUT_SECONDS = 2
-    FALLBACK_TITLE = "Unknown"
+    FALLBACK_TITLE = "Unknown Title"
 
     def self.call(target_url)
       new(target_url).call
