@@ -6,7 +6,7 @@ export function Analytics() {
   const averageClicks = 0;
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-12 md:py-16">
+    <div className="container mx-auto max-w-5xl px-4 py-12">
       {/* Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
