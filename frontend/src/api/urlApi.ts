@@ -5,9 +5,10 @@ import type {
   ShortenUrlResponse,
 } from '../types/urls';
 import type { UrlAnalyticsResponse } from '../types/analytics';
+import { BACKEND_BASE_URL } from '../utils/constants';
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000',
+  baseURL: BACKEND_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
