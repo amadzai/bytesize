@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Check, Copy, ExternalLink, Trash2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface UrlMapping {
   id: string;
@@ -29,6 +30,7 @@ export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const handleCopy = async () => {
     await navigator.clipboard.writeText(shortUrl).catch(() => {});
     setCopied(true);
+    toast.success('Copied short URL');
     window.setTimeout(() => setCopied(false), 2000);
   };
 
