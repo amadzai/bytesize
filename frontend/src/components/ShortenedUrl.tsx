@@ -19,7 +19,7 @@ interface ShortenedUrlProps {
 
 export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const [copied, setCopied] = useState(false);
-  const shortUrl = `${BACKEND_REDIRECT_URL}/urls/${mapping.shortUrl}`;
+  const shortUrl = `${BACKEND_REDIRECT_URL}/${mapping.shortUrl}`;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',

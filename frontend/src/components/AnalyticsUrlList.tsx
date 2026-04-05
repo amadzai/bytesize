@@ -121,7 +121,7 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
     <div className="space-y-4">
       {urls.map((url) => {
         const isExpanded = expandedUrls.has(url.id);
-        const shortUrl = `${BACKEND_REDIRECT_URL}/urls/${url.shortUrl}`;
+        const shortUrl = `${BACKEND_REDIRECT_URL}/${url.shortUrl}`;
         const { visits, isLoading, hasLoaded, hasMore, nextCursor, error } =
           getVisitState(url.id);
         const canShowAnalytics = url.clicks > 0;
