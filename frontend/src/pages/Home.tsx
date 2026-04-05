@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 import { ShortenedUrl } from '../components/ShortenedUrl';
 import { urlApi } from '../api/urlApi';
@@ -46,6 +47,7 @@ export function Home() {
 
     if (!isValidHttpUrl(url)) {
       setUrlError('Invalid URL');
+      toast.error('Invalid URL');
       return;
     }
 
@@ -58,8 +60,11 @@ export function Home() {
 
       setRecentUrls(updatedRecentUrls);
       setUrl('');
+      toast.success('URL shortened successfully');
     } catch (error) {
-      setUrlError(getErrorMessage(error));
+      const errorMessage = getErrorMessage(error);
+      setUrlError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
