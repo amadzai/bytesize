@@ -17,3 +17,18 @@ export interface UrlAnalyticsResponse {
   data: AnalyticsItem[];
   pagination: AnalyticsPagination;
 }
+
+export interface AnalyticsVisit {
+  id: string;
+  timestamp: number;
+  location: string;
+}
+
+export interface AnalyticsUrlMapping {
+  id: string;
+  longUrl: string;
+  shortUrl: string;
+  createdAt?: number;
+  title?: string;
+  clicks: number;
+}
