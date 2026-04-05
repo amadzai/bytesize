@@ -43,7 +43,7 @@ export function Home() {
   return (
     <div className="container mx-auto max-w-5xl px-6 md:px-4 py-12">
       {/* Header */}
-      <div className="mb-6 text-center md:mb-12">
+      <div className="mb-6 text-center md:mb-8">
         <div className="inline-flex h-20 w-32 items-center justify-center">
           <img
             src={icon}
