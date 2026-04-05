@@ -33,6 +33,7 @@ class UrlsController < ApplicationController
 
   def index
     collection = Url.order(created_at: :desc)
+    total_click_count = Url.sum(:click_count)
 
     @pagy, urls = pagy(
       :countish,
@@ -51,8 +52,9 @@ class UrlsController < ApplicationController
           click_count: url.click_count
         }
       },
+      total_click_count: total_click_count,
       pagination: @pagy.data_hash(
-        data_keys: %i[page previous next previous_url next_url]
+        data_keys: %i[page count previous next previous_url next_url]
       )
     }
   end
