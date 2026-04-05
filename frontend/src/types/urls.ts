@@ -32,3 +32,10 @@ export interface ListUrlsResponse {
   data: UrlListItem[];
   pagination: UrlsPagination;
 }
+
+export interface RecentUrlItem {
+  short_url: string;
+  target_url: string;
+  title: string | null;
+  created_at: number;
+}
