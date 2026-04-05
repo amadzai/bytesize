@@ -5,7 +5,11 @@ import { toast } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 import { ShortenedUrl } from '../components/ShortenedUrl';
 import { urlApi } from '../api/urlApi';
-import { addRecentUrl, readRecentUrls } from '../utils/recentUrlsStorage';
+import {
+  addRecentUrl,
+  readRecentUrls,
+  writeRecentUrls,
+} from '../utils/recentUrlsStorage';
 import type { ApiErrorResponse, RecentUrlItem } from '../types/urls';
 
 const isValidHttpUrl = (value: string) => {
@@ -68,6 +72,18 @@ export function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteRecentUrl = (id: string) => {
+    setRecentUrls((previousRecentUrls) => {
+      const updatedRecentUrls = previousRecentUrls.filter(
+        (item) => item.short_url !== id,
+      );
+      writeRecentUrls(updatedRecentUrls);
+      return updatedRecentUrls;
+    });
+
+    toast.success('Removed from recent URLs');
   };
 
   return (
@@ -145,6 +161,7 @@ export function Home() {
                   createdAt: item.created_at,
                   title: item.title ?? undefined,
                 }}
+                onDelete={handleDeleteRecentUrl}
               />
             ))}
           </div>

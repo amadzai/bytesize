@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Copy, ExternalLink } from 'lucide-react';
+import { Check, Copy, ExternalLink, Trash2 } from 'lucide-react';
 
 interface UrlMapping {
   id: string;
@@ -12,9 +12,10 @@ interface UrlMapping {
 
 interface ShortenedUrlProps {
   mapping: UrlMapping;
+  onDelete?: (id: string) => void;
 }
 
-export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
+export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const [copied, setCopied] = useState(false);
   const backendBaseUrl =
     import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000';
@@ -35,16 +36,29 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
     <div className="border-border bg-card rounded-xl border px-6 py-4 shadow-md transition-shadow hover:shadow-lg">
       <div className="space-y-3">
         {/* Title */}
-        {mapping.title && (
-          <div className="min-w-0">
-            <h3
-              className="text-card-foreground truncate text-base font-semibold"
-              title={mapping.title}
+        <div className="flex items-start gap-3">
+          {mapping.title && (
+            <div className="min-w-0 flex-1">
+              <h3
+                className="text-card-foreground truncate text-base font-semibold"
+                title={mapping.title}
+              >
+                {mapping.title}
+              </h3>
+            </div>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(mapping.id)}
+              title="Remove from recent"
+              aria-label="Remove from recent"
+              className="text-muted-foreground hover:text-error ml-auto shrink-0 cursor-pointer rounded-md p-1 transition-colors"
             >
-              {mapping.title}
-            </h3>
-          </div>
-        )}
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
 
         {/* Short URL */}
         <div className="flex min-w-0 items-center md:gap-1">
