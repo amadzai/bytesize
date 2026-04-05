@@ -1,4 +1,5 @@
 import { BarChart3 } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   AnalyticsUrlList,
   type AnalyticsUrlMapping,
@@ -131,9 +132,9 @@ export function Analytics() {
           <p className="text-muted-foreground mb-2">
             No URLs in the platform yet
           </p>
-          <a href="/" className="text-primary text-sm hover:opacity-80">
+          <RouterLink to="/" className="text-primary text-sm hover:opacity-80">
             Create the first shortened URL
-          </a>
+          </RouterLink>
         </div>
       )}
     </div>
