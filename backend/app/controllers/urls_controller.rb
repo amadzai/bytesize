@@ -3,7 +3,7 @@ class UrlsController < ApplicationController
   rate_limit to: 60, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
 
   def shorten
-    target_url = url_params[:target_url]
+    target_url = params.permit(:target_url)[:target_url]
 
     url = Url.new(target_url: target_url)
     url.validate
@@ -61,16 +61,10 @@ class UrlsController < ApplicationController
     url = Url.select(:id, :target_url).find_by!(short_url: params[:short_url])
 
     Url.increment_counter(:click_count, url.id)
-    Analytics::TrackVisitLocationJob.perform_later(url.id, request.remote_ip)
+    Analytics::TrackVisitJob.perform_later(url.id, request.remote_ip)
 
     redirect_to url.target_url, status: :found, allow_other_host: true
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Short URL not found" }, status: :not_found
-  end
-
-  private
-
-  def url_params
-    params.permit(:target_url)
   end
 end

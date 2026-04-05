@@ -124,7 +124,7 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
       click_count: 0
     )
 
-    assert_enqueued_with(job: Analytics::TrackVisitLocationJob, args: [ url.id, "203.0.113.30" ]) do
+    assert_enqueued_with(job: Analytics::TrackVisitJob, args: [ url.id, "203.0.113.30" ]) do
       get url_redirect_path(short_url: url.short_url), headers: { "REMOTE_ADDR" => "203.0.113.30" }
     end
 
