@@ -1,4 +1,5 @@
-import { Copy, ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Copy, ExternalLink } from 'lucide-react';
 
 interface UrlMapping {
   id: string;
@@ -14,6 +15,7 @@ interface ShortenedUrlProps {
 }
 
 export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
+  const [copied, setCopied] = useState(false);
   const shortUrl = `${window.location.origin}/${mapping.shortUrl}`;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
@@ -24,6 +26,12 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
   const truncateUrl = (url: string, maxLength: number = 80) => {
     if (url.length <= maxLength) return url;
     return url.substring(0, maxLength) + '...';
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(shortUrl).catch(() => {});
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -64,11 +72,18 @@ export function ShortenedUrl({ mapping }: ShortenedUrlProps) {
             </div>
           </div>
           <button
-            className="bg-accent hover:bg-primary group shrink-0 cursor-pointer rounded-lg p-3 transition-colors"
-            title="Copy action will be added during integration"
+            className={`group shrink-0 cursor-pointer rounded-lg p-3 transition-colors ${
+              copied ? 'bg-primary' : 'bg-accent hover:bg-primary'
+            }`}
+            title={copied ? 'Copied' : 'Copy short URL'}
             type="button"
+            onClick={handleCopy}
           >
-            <Copy className="text-primary h-5 w-5 transition-colors group-hover:text-white" />
+            {copied ? (
+              <Check className="h-5 w-5 text-white" />
+            ) : (
+              <Copy className="text-primary h-5 w-5 transition-colors group-hover:text-white" />
+            )}
           </button>
         </div>
 
