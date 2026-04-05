@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -10,7 +9,8 @@ import {
   readRecentUrls,
   writeRecentUrls,
 } from '../utils/recentUrlsStorage';
-import type { ApiErrorResponse, RecentUrlItem } from '../types/urls';
+import { getApiErrorMessage } from '../utils/errorMessages';
+import type { RecentUrlItem } from '../types/urls';
 
 const isValidHttpUrl = (value: string) => {
   try {
@@ -28,23 +28,6 @@ export function Home() {
   const [recentUrls, setRecentUrls] = useState<RecentUrlItem[]>(() =>
     readRecentUrls(),
   );
-
-  const getErrorMessage = (error: unknown): string => {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-      const errors = error.response?.data?.errors;
-      const message = error.response?.data?.error;
-
-      if (errors?.length) {
-        return errors[0];
-      }
-
-      if (message) {
-        return message;
-      }
-    }
-
-    return 'Unable to shorten URL. Please try again.';
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +49,12 @@ export function Home() {
       setUrl('');
       toast.success('URL shortened successfully');
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      setUrlError(errorMessage);
-      toast.error(errorMessage);
+      const message = getApiErrorMessage(
+        error,
+        'Unable to shorten URL. Please try again.',
+      );
+      setUrlError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

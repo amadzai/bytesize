@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Check, Copy, ExternalLink, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { BACKEND_BASE_URL } from '../utils/constants';
 
 interface UrlMapping {
   id: string;
@@ -18,9 +19,7 @@ interface ShortenedUrlProps {
 
 export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const [copied, setCopied] = useState(false);
-  const backendBaseUrl =
-    import.meta.env.VITE_BACKEND_API_URL ?? 'http://localhost:3000';
-  const shortUrl = `${backendBaseUrl}/urls/${mapping.shortUrl}`;
+  const shortUrl = `${BACKEND_BASE_URL}/urls/${mapping.shortUrl}`;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
