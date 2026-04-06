@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/screenshots/icons/bytesize-yellow.png" alt="Bytesize logo" width="220" />
+  <img src="docs/screenshots/icons/bytesize-yellow.png" alt="Bytesize logo" width="320" />
 </div>
 
 # Bytesize - URL Shortener
