@@ -1,6 +1,4 @@
 export interface AnalyticsItem {
-  id: string;
-  url_id: string;
   location: string | null;
   created_at: string;
   updated_at: string;
@@ -19,7 +17,7 @@ export interface UrlAnalyticsResponse {
 }
 
 export interface AnalyticsVisit {
-  id: string;
+  key: string;
   timestamp: number;
   location: string;
 }

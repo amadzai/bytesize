@@ -69,11 +69,13 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
 
     try {
       const response = await urlApi.analytics(url.shortUrl, cursor);
-      const mappedVisits: AnalyticsVisit[] = response.data.map((visit) => ({
-        id: String(visit.id),
-        timestamp: Date.parse(visit.created_at),
-        location: visit.location || 'Unknown location',
-      }));
+      const mappedVisits: AnalyticsVisit[] = response.data.map(
+        (visit, index) => ({
+          key: `${visit.created_at}-${visit.location ?? 'unknown'}-${index}`,
+          timestamp: Date.parse(visit.created_at),
+          location: visit.location || 'Unknown Location',
+        }),
+      );
 
       setVisitStateByUrl((previous) => {
         const current = previous[url.id] ?? defaultVisitState;
@@ -242,7 +244,7 @@ export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
                 >
                   {visits.map((visit) => (
                     <div
-                      key={visit.id}
+                      key={visit.key}
                       className="border-border bg-card flex items-center justify-between rounded-lg border p-3 md:p-4"
                     >
                       <div className="flex items-center gap-2 md:gap-3">
