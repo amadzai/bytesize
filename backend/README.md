@@ -51,7 +51,7 @@ docker compose -f docker-compose.dev.yml exec web bin/rails test
 
 ### Run Tests (Local Rails)
 
-If you prefer running tests directly with `bin/rails test`, ensure a local PostgreSQL instance is running first, then run:
+If you prefer running tests directly with `bin/rails test`, ensure local Ruby (project version) and a local PostgreSQL instance are installed and running first, then run:
 
 ```bash
 bin/rails test
