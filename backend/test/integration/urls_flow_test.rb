@@ -3,14 +3,14 @@ require "test_helper"
 class UrlsFlowTest < ActionDispatch::IntegrationTest
   include ActiveJob::TestHelper
 
-  test "shorten returns 201 with target_url, short_url, and title" do
+  test "create returns 201 with target_url, short_url, and title" do
     target_url = "https://example.com/path"
     short_code = "abc12345"
     fetched_title = "Example Title"
 
     Urls::GenerateShortUrl.stub(:call, short_code) do
       Urls::FetchTitle.stub(:call, fetched_title) do
-        post "/urls/shorten", params: { target_url: target_url }
+        post "/urls", params: { target_url: target_url }
       end
     end
 
@@ -27,8 +27,8 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     assert_equal fetched_title, created.title
   end
 
-  test "shorten returns 422 with error message for invalid URL" do
-    post "/urls/shorten", params: { target_url: "not-a-url" }
+  test "create returns 422 with error message for invalid URL" do
+    post "/urls", params: { target_url: "not-a-url" }
 
     assert_response :unprocessable_entity
 
@@ -36,19 +36,19 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     assert(body["errors"].any? { |msg| msg.include?("valid HTTP or HTTPS URL") })
   end
 
-  test "shorten rate limits after 10 requests per minute" do
+  test "create rate limits after 10 requests per minute" do
     Rails.cache.clear
     codes = (1..11).map { |n| "rate#{n.to_s.rjust(4, '0')}" }
 
     Urls::GenerateShortUrl.stub(:call, -> { codes.shift }) do
       Urls::FetchTitle.stub(:call, "Rate Title") do
         10.times do
-          post "/urls/shorten",
+          post "/urls",
                params: { target_url: "https://example.com/#{SecureRandom.hex(4)}" },
                headers: { "REMOTE_ADDR" => "203.0.113.10" }
         end
 
-        post "/urls/shorten",
+        post "/urls",
              params: { target_url: "https://example.com/blocked" },
              headers: { "REMOTE_ADDR" => "203.0.113.10" }
       end

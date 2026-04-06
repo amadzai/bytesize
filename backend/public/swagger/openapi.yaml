@@ -23,11 +23,11 @@ paths:
               schema:
                 type: string
               example: OK
-  /urls/shorten:
+  /urls:
     post:
       tags: [URLs]
       summary: Create a short URL
-      operationId: shortenUrl
+      operationId: createUrl
       requestBody:
         required: true
         content:
@@ -56,7 +56,6 @@ paths:
                   - Target url must be a valid HTTP or HTTPS URL
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
-  /urls:
     get:
       tags: [URLs]
       summary: List shortened URLs
@@ -241,14 +240,8 @@ components:
           $ref: "#/components/schemas/UrlListPagination"
     AnalyticsItem:
       type: object
-      required: [id, url_id, location, created_at, updated_at]
+      required: [location, created_at, updated_at]
       properties:
-        id:
-          type: integer
-          description: Analytics row ID
-        url_id:
-          type: integer
-          description: Associated URL ID
         location:
           type: string
           nullable: true
