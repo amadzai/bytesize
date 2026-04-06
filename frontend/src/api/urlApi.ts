@@ -16,10 +16,7 @@ const client = axios.create({
 
 export const urlApi = {
   async shorten(payload: ShortenUrlPayload): Promise<ShortenUrlResponse> {
-    const { data } = await client.post<ShortenUrlResponse>(
-      '/urls/shorten',
-      payload,
-    );
+    const { data } = await client.post<ShortenUrlResponse>('/urls', payload);
     return data;
   },
 
