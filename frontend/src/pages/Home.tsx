@@ -74,7 +74,10 @@ export function Home() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-6 py-12 md:px-4">
+    <div
+      className="container mx-auto max-w-5xl px-6 py-12 md:px-4"
+      onTouchEndCapture={() => setIsPrivacyTooltipOpen(false)}
+    >
       {/* Header */}
       <div className="mb-6 text-center md:mb-8">
         <div className="inline-flex h-20 w-32 items-center justify-center">
@@ -104,7 +107,10 @@ export function Home() {
               >
                 Long URL
               </label>
-              <span className="group relative inline-flex items-center">
+              <span
+                className="group relative inline-flex items-center"
+                onTouchEnd={(event) => event.stopPropagation()}
+              >
                 <button
                   type="button"
                   className="text-muted-foreground inline-flex h-4 w-4 cursor-pointer items-center justify-center"
