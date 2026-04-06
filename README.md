@@ -40,46 +40,30 @@ For full dependency details, see [`backend/Gemfile`](backend/Gemfile) and [`fron
 
 ### Workspace
 
-If you are using VS Code/Cursor, open the monorepo workspace file so project-specific settings and extensions (e.g., Ruby LSP) work as intended:
+If you are using VS Code/Cursor, open project using monorepo workspace file so project-specific settings and extensions (e.g., Ruby LSP) work as intended:
 
-- [monorepo.code-workspace](monorepo.code-workspace)
+- [`monorepo.code-workspace`](monorepo.code-workspace)
 
-### API Docs (Swagger UI)
+### API Docs
 
-After starting the backend in development, view Swagger UI at:
+After starting the backend in development, view API docs at:
 
 - [http://localhost:3000/swagger](http://localhost:3000/swagger)
-
-> Note: Swagger routes are available in development only.
 
 ## Project Structure
 
 ```
 bytesize/
 ├── backend/                          # Ruby on Rails API (URL shortener + analytics)
-│   ├── app/
-│   │   ├── controllers/              # API controllers (Urls, Analytics)
-│   │   ├── models/                   # ActiveRecord models (Url, Analytic)
-│   │   ├── services/                 # Service objects (Urls, Analytics logic)
-│   │   ├── jobs/                     # Background jobs (Analytics)
-│   │   └── validators/               # Custom validators (Url validation)
-│   ├── config/                       # Rails configuration and routes
-│   ├── db/                           # Schema, migrations
-│   ├── test/                         # Backend test suite
-│   ├── Dockerfile / docker-compose*  # Backend/container setup
-│   └── Gemfile                       # Ruby dependencies
 ├── frontend/                         # React + TypeScript app (Vite)
-│   ├── src/
-│   │   ├── pages/                    # Main pages (Home, Analytics)
-│   │   ├── components/               # Reusable UI components
-│   │   ├── api/                      # API client
-│   │   ├── hooks/                    # Custom React hooks
-│   │   ├── types/                    # Shared TS types/interfaces
-│   │   ├── layouts/                  # Layout components
-│   │   └── utils/                    # Frontend utilities/helpers
-│   └── package.json                  # Frontend dependencies/scripts
 ├── docs/                             # Project documentation and assets
+├── .gitlab/                          # Merge Request template
 ```
+
+For implementation details, see:
+
+- [`backend/README.md`](backend/README.md)
+- [`frontend/README.md`](frontend/README.md)
 
 ## High-Level Design
 
