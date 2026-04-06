@@ -13,14 +13,14 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
     end
   end
 
-  test "returns fallback title on non-success response after max retries" do
+  test "returns fallback title on non-success response without retrying" do
     response = non_success_response
-    http = FakeHttp.new([ response ] * Urls::FetchTitle::MAX_RETRIES)
+    http = FakeHttp.new([ response ])
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
       assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
-      assert_equal Urls::FetchTitle::MAX_RETRIES, http.calls
+      assert_equal 1, http.calls
     end
   end
 
@@ -46,26 +46,25 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
     end
   end
 
-  test "retries on exception and then returns title when later attempt succeeds" do
+  test "returns fallback title when request raises an exception" do
     error = Timeout::Error.new("execution expired")
-    response = success_response("<html><head><title>Recovered Title</title></head></html>")
-    http = FakeHttp.new([ error, response ])
+    http = FakeHttp.new([ error ])
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal "Recovered Title", title
-      assert_equal 2, http.calls
+      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal 1, http.calls
     end
   end
 
-  test "returns fallback title after max retries when all attempts raise errors" do
+  test "returns fallback title when request raises multiple errors but only first call is used" do
     error = Timeout::Error.new("execution expired")
     http = FakeHttp.new([ error, error, error ])
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
       assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
-      assert_equal Urls::FetchTitle::MAX_RETRIES, http.calls
+      assert_equal 1, http.calls
     end
   end
 
