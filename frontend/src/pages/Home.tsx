@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'lucide-react';
+import { CircleAlert, Link } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 import { ShortenedUrl } from '../components/ShortenedUrl';
@@ -25,6 +25,7 @@ export function Home() {
   const [url, setUrl] = useState('');
   const [urlError, setUrlError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isPrivacyTooltipOpen, setIsPrivacyTooltipOpen] = useState(false);
   const [recentUrls, setRecentUrls] = useState<RecentUrlItem[]>(() =>
     readRecentUrls(),
   );
@@ -95,13 +96,42 @@ export function Home() {
       <div className="border-border bg-card mb-6 rounded-2xl border p-8 shadow-xl md:mb-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="url"
-              className="text-card-foreground mb-2 inline-flex items-center gap-2 text-sm font-medium"
-            >
+            <div className="mb-2 inline-flex items-center gap-2">
               <Link className="text-muted-foreground h-4 w-4" />
-              Long URL
-            </label>
+              <label
+                htmlFor="url"
+                className="text-card-foreground text-sm font-medium"
+              >
+                Long URL
+              </label>
+              <span className="group relative inline-flex items-center">
+                <button
+                  type="button"
+                  className="text-muted-foreground inline-flex h-4 w-4 cursor-pointer items-center justify-center"
+                  aria-label="Show privacy warning"
+                  aria-expanded={isPrivacyTooltipOpen}
+                  aria-controls="url-privacy-warning"
+                  onClick={() =>
+                    setIsPrivacyTooltipOpen((previous) => !previous)
+                  }
+                  onBlur={() => setIsPrivacyTooltipOpen(false)}
+                >
+                  <CircleAlert className="h-3 w-3" />
+                </button>
+                <span
+                  id="url-privacy-warning"
+                  role="tooltip"
+                  className={`bg-foreground text-background pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded-md px-3 py-2 text-xs leading-relaxed shadow-md transition-opacity ${
+                    isPrivacyTooltipOpen
+                      ? 'opacity-100'
+                      : 'opacity-0 group-hover:opacity-100'
+                  }`}
+                >
+                  Do not shorten private or sensitive URLs. Anyone with the
+                  short link can access the destination.
+                </span>
+              </span>
+            </div>
             <input
               id="url"
               type="text"
