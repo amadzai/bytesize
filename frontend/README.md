@@ -8,7 +8,7 @@ Built from the Vite React TypeScript template, this frontend provides the UI for
 
 - **Pages**
   - [`src/pages/Home.tsx`](src/pages/Home.tsx): main page for creating short URLs and showing recently shortened URLs (local storage, 5 max per browser).
-  - [`src/pages/Analytics.tsx`](src/pages/Analytics.tsx): analytics page for viewing visits and pagination.
+  - [`src/pages/Analytics.tsx`](src/pages/Analytics.tsx): analytics page for viewing visits and pagination (acts as usage report for clicks, geolocation, and timestamp).
 - **API and Routing**
   - [`src/api/urlApi.ts`](src/api/urlApi.ts): API client for URL creation, listing, and analytics endpoints.
   - [`src/router.tsx`](src/router.tsx): app route configuration.
