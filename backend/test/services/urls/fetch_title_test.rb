@@ -19,7 +19,7 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal "example.com", title
       assert_equal 1, http.calls
     end
   end
@@ -30,7 +30,7 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
 
     Net::HTTP.stub(:new, ->(_host, _port) { http_missing }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal "example.com", title
       assert_equal 1, http_missing.calls
     end
   end
@@ -41,7 +41,7 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
 
     Net::HTTP.stub(:new, ->(_host, _port) { http_blank }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal "example.com", title
       assert_equal 1, http_blank.calls
     end
   end
@@ -52,7 +52,7 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal "example.com", title
       assert_equal 1, http.calls
     end
   end
@@ -63,7 +63,18 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
 
     Net::HTTP.stub(:new, ->(_host, _port) { http }) do
       title = Urls::FetchTitle.call("https://example.com")
-      assert_equal Urls::FetchTitle::FALLBACK_TITLE, title
+      assert_equal "example.com", title
+      assert_equal 1, http.calls
+    end
+  end
+
+  test "returns normalized host fallback by stripping www" do
+    response = non_success_response
+    http = FakeHttp.new([ response ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://www.booking.com/search")
+      assert_equal "booking.com", title
       assert_equal 1, http.calls
     end
   end
