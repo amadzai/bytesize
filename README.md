@@ -65,6 +65,10 @@ For implementation details, see:
 - [`backend/README.md`](backend/README.md)
 - [`frontend/README.md`](frontend/README.md)
 
+For wiki on short URL path solution, see:
+
+- [Short URL Path Solution](https://gitlab.com/amadzai/bytesize/-/wikis/Short-URL-Path-Solution)
+
 ## High-Level Design
 
 This diagram shows the main request path between client, Rails API, and PostgreSQL.
