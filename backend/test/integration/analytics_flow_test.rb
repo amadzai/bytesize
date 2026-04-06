@@ -26,11 +26,12 @@ class AnalyticsFlowTest < ActionDispatch::IntegrationTest
     first = body["data"].first
     second = body["data"].second
 
-    assert_equal newer.id, first["id"]
-    assert_equal older.id, second["id"]
+    assert_equal newer.location, first["location"]
+    assert_equal older.location, second["location"]
+    assert_operator Time.zone.parse(first["created_at"]), :>, Time.zone.parse(second["created_at"])
 
-    assert first.key?("id")
-    assert first.key?("url_id")
+    assert_not first.key?("id")
+    assert_not first.key?("url_id")
     assert first.key?("location")
     assert first.key?("created_at")
     assert first.key?("updated_at")

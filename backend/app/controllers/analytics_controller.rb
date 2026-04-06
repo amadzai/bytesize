@@ -16,8 +16,6 @@ class AnalyticsController < ApplicationController
     render json: {
       data: analytics.map { |analytic|
         {
-          id: analytic.id,
-          url_id: analytic.url_id,
           location: analytic.location,
           created_at: analytic.created_at,
           updated_at: analytic.updated_at
