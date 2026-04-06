@@ -1,4 +1,6 @@
-![Bytesize logo](docs/screenshots/icons/bytesize-yellow.png)
+<p align="center">
+  <img src="docs/screenshots/icons/bytesize-yellow.png" alt="Bytesize logo" width="220" />
+</p>
 
 # Bytesize - URL Shortener
 
