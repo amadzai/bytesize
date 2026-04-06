@@ -1,9 +1,9 @@
 import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
-import { AnalyticsUrlList } from '../components/AnalyticsUrlList';
+import { UrlList } from '../components/UrlList';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
 
-export function Analytics() {
+export function UsageReport() {
   const {
     sortedUrls,
     totalClicks,
@@ -25,7 +25,7 @@ export function Analytics() {
           </div>
           <div>
             <h1 className="text-foreground text-xl font-bold md:text-3xl">
-              Platform Analytics
+              Usage Report
             </h1>
             <p className="text-muted-foreground text-xs md:text-base">
               View all shortened URLs and their visit analytics
@@ -68,7 +68,7 @@ export function Analytics() {
           </button>
         </div>
       ) : sortedUrls.length > 0 ? (
-        <AnalyticsUrlList urls={sortedUrls} />
+        <UrlList urls={sortedUrls} />
       ) : isLoading ? (
         <div className="border-border bg-card rounded-xl border p-8 text-center shadow-md">
           <p className="text-muted-foreground text-sm md:text-base">

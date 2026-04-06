@@ -22,11 +22,11 @@ const defaultVisitState: UrlVisitState = {
   nextCursor: null,
 };
 
-interface AnalyticsUrlListProps {
+interface UrlListProps {
   urls: AnalyticsUrlMapping[];
 }
 
-export function AnalyticsUrlList({ urls }: AnalyticsUrlListProps) {
+export function UrlList({ urls }: UrlListProps) {
   const [expandedUrls, setExpandedUrls] = useState<Set<string>>(new Set());
   const [visitStateByUrl, setVisitStateByUrl] = useState<
     Record<string, UrlVisitState>
