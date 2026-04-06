@@ -58,12 +58,12 @@ export function Layout({ children }: LayoutProps) {
 
             <nav className="flex items-center gap-4">
               <RouterLink
-                to="/analytics"
+                to="/usage-report"
                 className="group flex items-center gap-1.5 py-2"
               >
                 <BarChart3 className="text-foreground group-hover:text-primary h-5 w-5 transition-colors" />
                 <span className="text-foreground group-hover:text-primary text-md font-bold transition-colors md:text-lg">
-                  Analytics
+                  Usage Report
                 </span>
               </RouterLink>
             </nav>
