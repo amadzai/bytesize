@@ -77,14 +77,6 @@ export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
                   {mapping.title}
                 </h3>
               </div>
-              {displayHost && (
-                <p
-                  className="text-muted-foreground mt-1 truncate text-xs"
-                  title={displayHost}
-                >
-                  {displayHost}
-                </p>
-              )}
             </div>
           )}
           {onDelete && (
