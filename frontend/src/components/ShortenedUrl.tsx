@@ -31,7 +31,6 @@ export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const faviconUrl = parsedLongUrl
     ? `https://www.google.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(parsedLongUrl.origin)}`
     : null;
-  const displayHost = parsedLongUrl?.hostname;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
