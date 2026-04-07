@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, Play, X } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import icon from '../assets/icon.png';
 
@@ -11,6 +12,7 @@ export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isUsageReport = location.pathname === '/usage-report';
+  const [showDemoBanner, setShowDemoBanner] = useState(true);
 
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
@@ -42,6 +44,30 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Header */}
       <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur-sm">
+        {showDemoBanner && (
+          <div className="bg-primary text-background border-border border-b">
+            <div className="relative container mx-auto flex max-w-5xl items-center justify-center px-4 py-2">
+              <a
+                href="https://www.youtube.com/watch?v=q9ao-LVQBLE"
+                onClick={() => setShowDemoBanner(false)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-center text-sm font-semibold underline underline-offset-2 transition-opacity hover:opacity-80 md:text-base"
+              >
+                <Play className="h-3.5 w-3.5 opacity-85 md:h-4 md:w-4" />
+                <span>Click here to watch the demo!</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowDemoBanner(false)}
+                aria-label="Close demo banner"
+                className="absolute right-4 cursor-pointer rounded p-1 transition-opacity hover:opacity-80"
+              >
+                <X className="h-4 w-4 md:h-5 md:w-5" />
+              </button>
+            </div>
+          </div>
+        )}
         <div className="container mx-auto max-w-5xl px-4 py-4">
           <div className="flex items-center justify-between">
             <RouterLink
