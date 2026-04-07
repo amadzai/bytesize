@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Check, Copy, ExternalLink, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Check, Copy, ExternalLink, Globe, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { BACKEND_REDIRECT_URL } from '../utils/constants';
 
@@ -19,7 +19,19 @@ interface ShortenedUrlProps {
 
 export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
   const [copied, setCopied] = useState(false);
+  const [faviconFailed, setFaviconFailed] = useState(false);
   const shortUrl = `${BACKEND_REDIRECT_URL}/${mapping.shortUrl}`;
+  const parsedLongUrl = useMemo(() => {
+    try {
+      return new URL(mapping.longUrl);
+    } catch {
+      return null;
+    }
+  }, [mapping.longUrl]);
+  const faviconUrl = parsedLongUrl
+    ? `https://www.google.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(parsedLongUrl.origin)}`
+    : null;
+  const displayHost = parsedLongUrl?.hostname;
   const createdAtLabel = new Date(mapping.createdAt).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -40,12 +52,39 @@ export function ShortenedUrl({ mapping, onDelete }: ShortenedUrlProps) {
         <div className="flex items-start gap-3">
           {mapping.title && (
             <div className="min-w-0 flex-1">
-              <h3
-                className="text-card-foreground truncate text-base font-semibold"
-                title={mapping.title}
-              >
-                {mapping.title}
-              </h3>
+              <div className="flex min-w-0 items-center gap-2">
+                {faviconUrl && !faviconFailed ? (
+                  <img
+                    src={faviconUrl}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    width={20}
+                    height={20}
+                    className="h-5 w-5 shrink-0 rounded-sm"
+                    onError={() => setFaviconFailed(true)}
+                  />
+                ) : (
+                  <Globe
+                    className="text-muted-foreground h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                )}
+                <h3
+                  className="text-card-foreground truncate text-base font-semibold"
+                  title={mapping.title}
+                >
+                  {mapping.title}
+                </h3>
+              </div>
+              {displayHost && (
+                <p
+                  className="text-muted-foreground mt-1 truncate text-xs"
+                  title={displayHost}
+                >
+                  {displayHost}
+                </p>
+              )}
             </div>
           )}
           {onDelete && (
