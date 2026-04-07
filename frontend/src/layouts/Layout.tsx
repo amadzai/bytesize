@@ -62,7 +62,7 @@ export function Layout({ children }: LayoutProps) {
                 className="group flex items-center gap-1.5 py-2"
               >
                 <BarChart3 className="text-foreground group-hover:text-primary h-5 w-5 transition-colors" />
-                <span className="text-foreground group-hover:text-primary text-md font-bold transition-colors md:text-lg">
+                <span className="text-foreground group-hover:text-primary text-md font-bold transition-colors md:text-xl">
                   Usage Report
                 </span>
               </RouterLink>
