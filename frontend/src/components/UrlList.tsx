@@ -22,6 +22,8 @@ const defaultVisitState: UrlVisitState = {
   nextCursor: null,
 };
 
+const MAX_VISITS_PER_URL = 500;
+
 interface UrlListProps {
   urls: AnalyticsUrlMapping[];
 }
@@ -65,6 +67,10 @@ export function UrlList({ urls }: UrlListProps) {
       return;
     }
 
+    if (append && state.visits.length >= MAX_VISITS_PER_URL) {
+      return;
+    }
+
     updateVisitState(url.id, { isLoading: true, error: undefined });
 
     try {
@@ -79,16 +85,19 @@ export function UrlList({ urls }: UrlListProps) {
 
       setVisitStateByUrl((previous) => {
         const current = previous[url.id] ?? defaultVisitState;
+        const nextVisits = (
+          append ? [...current.visits, ...mappedVisits] : mappedVisits
+        ).slice(0, MAX_VISITS_PER_URL);
+        const reachedVisitLimit = nextVisits.length >= MAX_VISITS_PER_URL;
+
         return {
           ...previous,
           [url.id]: {
-            visits: append
-              ? [...current.visits, ...mappedVisits]
-              : mappedVisits,
+            visits: nextVisits,
             isLoading: false,
             hasLoaded: true,
-            hasMore: response.pagination.has_more,
-            nextCursor: response.pagination.next,
+            hasMore: !reachedVisitLimit && response.pagination.has_more,
+            nextCursor: reachedVisitLimit ? null : response.pagination.next,
           },
         };
       });
