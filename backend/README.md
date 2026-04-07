@@ -1,6 +1,6 @@
 # Backend - Ruby on Rails
 
-This backend was bootstrapped as an API-only Rails app with PostgreSQL `--api -d postgresql` and then scaffolded using Rails generators for models, controllers, and jobs.
+This backend was bootstrapped as an API-only Rails app with PostgreSQL and then scaffolded using Rails generators for models, controllers, and jobs.
 
 ## Core Components
 
