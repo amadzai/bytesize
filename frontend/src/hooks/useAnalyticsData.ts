@@ -138,7 +138,12 @@ export function useAnalyticsData(): UseAnalyticsDataReturn {
   }, [currentPageUrl, retryCount]);
 
   const sortedUrls = useMemo(
-    () => [...urls].sort((a, b) => b.clicks - a.clicks),
+    () =>
+      [...urls].sort(
+        (a, b) =>
+          (b.createdAt ?? Number.NEGATIVE_INFINITY) -
+          (a.createdAt ?? Number.NEGATIVE_INFINITY),
+      ),
     [urls],
   );
 
