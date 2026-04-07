@@ -6,6 +6,8 @@
 
 A URL shortener application that creates unique short links, supports fast redirects, and tracks visit analytics.
 
+For demo video, see [Bytesize Demo | Amad Zai](https://youtu.be/q9ao-LVQBLE)
+
 ## Setup and Dependencies
 
 This project is a monorepo with **Ruby on Rails (API) + PostgreSQL** for the backend and **React (TS Vite) + Tailwind** for the frontend.
