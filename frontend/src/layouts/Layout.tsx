@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { BarChart3 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import icon from '../assets/icon.png';
@@ -8,6 +8,10 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  const isUsageReport = location.pathname === '/usage-report';
+
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Toaster
@@ -51,7 +55,13 @@ export function Layout({ children }: LayoutProps) {
                   className="h-full w-full object-contain"
                 />
               </div>
-              <span className="text-foreground group-hover:text-primary text-lg font-bold transition-colors md:text-2xl">
+              <span
+                className={`text-lg font-bold transition-colors md:text-2xl ${
+                  isHome
+                    ? 'text-primary'
+                    : 'text-foreground group-hover:text-primary'
+                }`}
+              >
                 bytesize
               </span>
             </RouterLink>
@@ -61,8 +71,20 @@ export function Layout({ children }: LayoutProps) {
                 to="/usage-report"
                 className="group flex items-center gap-1.5 py-2"
               >
-                <BarChart3 className="text-foreground group-hover:text-primary h-5 w-5 transition-colors" />
-                <span className="text-foreground group-hover:text-primary text-md font-bold transition-colors md:text-xl">
+                <BarChart3
+                  className={`h-5 w-5 transition-colors ${
+                    isUsageReport
+                      ? 'text-primary'
+                      : 'text-foreground group-hover:text-primary'
+                  }`}
+                />
+                <span
+                  className={`text-md font-bold transition-colors md:text-xl ${
+                    isUsageReport
+                      ? 'text-primary'
+                      : 'text-foreground group-hover:text-primary'
+                  }`}
+                >
                   Usage Report
                 </span>
               </RouterLink>
