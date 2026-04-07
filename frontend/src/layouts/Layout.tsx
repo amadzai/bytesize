@@ -79,7 +79,7 @@ export function Layout({ children }: LayoutProps) {
                   }`}
                 />
                 <span
-                  className={`text-md font-bold transition-colors md:text-xl ${
+                  className={`text-sm font-bold transition-colors md:text-lg ${
                     isUsageReport
                       ? 'text-primary'
                       : 'text-foreground group-hover:text-primary'
