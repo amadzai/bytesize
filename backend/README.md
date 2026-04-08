@@ -14,7 +14,7 @@ This backend was bootstrapped as an API-only Rails app with PostgreSQL and then 
   - [`Urls::FetchTitle`](app/services/urls/fetch_title.rb): fetches the target page title.
   - [`Analytics::FetchLocation`](app/services/analytics/fetch_location.rb): resolves IP geolocation.
 - **Background Jobs**
-  - [`Analytics::TrackVisitJob`](app/jobs/analytics/track_visit_job.rb): records visit analytics asynchronously on redirect.
+  - [`Analytics::TrackVisitJob`](app/jobs/analytics/track_visit_job.rb): records visit analytics asynchronously on redirect (Active Job w/ Solid Queue).
 
 ### Libraries
 
