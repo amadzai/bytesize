@@ -8,11 +8,21 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+const DEMO_BANNER_DISMISSED_KEY = 'demoBannerDismissed';
+
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isUsageReport = location.pathname === '/usage-report';
-  const [showDemoBanner, setShowDemoBanner] = useState(true);
+  const [showDemoBanner, setShowDemoBanner] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem(DEMO_BANNER_DISMISSED_KEY) !== 'true';
+  });
+
+  const dismissDemoBanner = () => {
+    setShowDemoBanner(false);
+    localStorage.setItem(DEMO_BANNER_DISMISSED_KEY, 'true');
+  };
 
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
@@ -49,7 +59,7 @@ export function Layout({ children }: LayoutProps) {
             <div className="relative container mx-auto flex max-w-5xl items-center justify-center px-4 py-2">
               <a
                 href="https://www.youtube.com/watch?v=q9ao-LVQBLE"
-                onClick={() => setShowDemoBanner(false)}
+                onClick={dismissDemoBanner}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex w-full items-center justify-center gap-1.5 text-center text-sm font-semibold underline underline-offset-2 transition-opacity hover:opacity-80 md:text-base"
@@ -59,7 +69,7 @@ export function Layout({ children }: LayoutProps) {
               </a>
               <button
                 type="button"
-                onClick={() => setShowDemoBanner(false)}
+                onClick={dismissDemoBanner}
                 aria-label="Close demo banner"
                 className="absolute right-4 cursor-pointer rounded p-1 transition-opacity hover:opacity-80"
               >
