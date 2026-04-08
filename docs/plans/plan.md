@@ -108,4 +108,4 @@ Stores a record of each visit to a short URL, with a foreign key reference to th
 - Capture visitor IP during redirect
 - Convert IP to location via external tool (ipinfo, ip-api, ipstack)
 - Get city and country, include as location during analytics creation
-- Make async to prevent redirect process
+- Make async to prevent blocking the redirect process
