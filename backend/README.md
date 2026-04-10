@@ -28,7 +28,7 @@ This backend was bootstrapped as an API-only Rails app with PostgreSQL and then 
 
 ## Testing
 
-This backend uses **Minitest** for testing and includes:
+This backend uses **Minitest** for testing and [**SimpleCov**](https://github.com/simplecov-ruby/simplecov) for coverage, and includes:
 
 - **Model tests** ([`test/models`](test/models)): model behavior/validations.
 - **Service tests** ([`test/services`](test/services)): business logic in service objects.
@@ -56,3 +56,7 @@ If you prefer running tests directly with `bin/rails test`, ensure local Ruby (p
 ```bash
 bin/rails test
 ```
+
+### Test Coverage
+
+After running tests, open the coverage report at [`backend/coverage/index.html`](coverage/index.html).
