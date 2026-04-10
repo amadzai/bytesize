@@ -36,6 +36,67 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     assert(body["errors"].any? { |msg| msg.include?("valid HTTP or HTTPS URL") })
   end
 
+  test "create returns 422 when save fails after validation passes" do
+    url = Url.new(target_url: "https://example.com/path")
+    url.validate
+
+    Url.stub(:new, url) do
+      url.stub(:save, false) do
+        post "/urls", params: { target_url: "https://example.com/path" }
+      end
+    end
+
+    assert_response :unprocessable_entity
+    body = JSON.parse(response.body)
+    assert_kind_of Array, body["errors"]
+  end
+
+  test "create retries once when save raises record not unique" do
+    fake_errors = Struct.new(:messages) do
+      def [](attribute)
+        return [] if attribute == :target_url
+
+        []
+      end
+
+      def full_messages
+        messages
+      end
+
+      def full_messages_for(_attribute)
+        messages
+      end
+    end
+
+    fake_url = Struct.new(:target_url, :short_url, :title, :errors) do
+      def validate; end
+    end.new("https://example.com/retry", nil, nil, fake_errors.new([]))
+
+    save_calls = 0
+    fake_url.define_singleton_method(:save) do
+      save_calls += 1
+      raise ActiveRecord::RecordNotUnique if save_calls == 1
+
+      true
+    end
+
+    Url.stub(:new, fake_url) do
+      Urls::GenerateShortUrl.stub(:call, "retry001") do
+        Urls::FetchTitle.stub(:call, "Retry Title") do
+          post "/urls", params: { target_url: "https://example.com/retry" }
+        end
+      end
+    end
+
+    assert_response :created
+    assert_equal 2, save_calls
+
+    body = JSON.parse(response.body)
+    assert_equal "https://example.com/retry", body["target_url"]
+    assert_equal "retry001", body["short_url"]
+    assert_equal "Retry Title", body["title"]
+  end
+
   test "create rate limits after 10 requests per minute" do
     Rails.cache.clear
     codes = (1..11).map { |n| "rate#{n.to_s.rjust(4, '0')}" }

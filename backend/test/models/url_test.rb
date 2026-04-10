@@ -40,4 +40,11 @@ class UrlTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:short_url], "has already been taken"
   end
+
+  test "is invalid when target_url cannot be parsed as URI" do
+    url = Url.new(target_url: "https://example.com/%zz", short_url: "baduri01")
+
+    assert_not url.valid?
+    assert_includes url.errors[:target_url], "must be a valid HTTP or HTTPS URL"
+  end
 end
