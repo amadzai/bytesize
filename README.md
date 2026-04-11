@@ -8,7 +8,7 @@ A URL shortener application that creates unique short links, supports fast redir
 
 For demo video, see [Bytesize Demo | Amad Zai](https://youtu.be/q9ao-LVQBLE)
 
----
+> **Note:** This project was originally developed on GitLab. To view the original repository and history, see [Bytesize | GitLab](https://gitlab.com/amadzai/bytesize)
 
 ## Setup and Dependencies
 
@@ -54,8 +54,6 @@ After starting the backend in development, view API docs at:
 
 - [http://localhost:3000/swagger](http://localhost:3000/swagger)
 
----
-
 ## Project Structure
 
 ```
@@ -75,8 +73,6 @@ For wiki on short URL path solution, see:
 
 - [Short URL Path Solution](https://gitlab.com/amadzai/bytesize/-/wikis/Short-URL-Path-Solution)
 
----
-
 ## High-Level Design
 
 This diagram shows the main request path between client, Rails API, and PostgreSQL.
@@ -84,8 +80,6 @@ This diagram shows the main request path between client, Rails API, and PostgreS
 ![High-level design diagram](docs/diagrams/high-level-design.png)
 
 For step-by-step request flows (URL shortening and redirect), see [`docs/diagrams/`](docs/diagrams/).
-
----
 
 ## Deployed URL
 
