@@ -8,7 +8,7 @@ A URL shortener application that creates unique short links, supports fast redir
 
 For demo video, see [Bytesize Demo | Amad Zai](https://youtu.be/q9ao-LVQBLE)
 
-> This project was originally developed on GitLab. To view the original repository and history, see [Bytesize | GitLab](https://gitlab.com/amadzai/bytesize)
+> Originally developed on GitLab, for full history see [Bytesize | GitLab](https://gitlab.com/amadzai/bytesize)
 
 ## Setup and Dependencies
 
