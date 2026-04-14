@@ -11,7 +11,7 @@
 - **Backend:** Ruby on Rails
 - **Frontend:** React (Vite) + Tailwind
 - **Database:** PostgreSQL
-- **Hosting:** Contabo + Vercel
+- **Hosting:** Contabo VPS + Vercel
 
 ### Functional Requirements
 
