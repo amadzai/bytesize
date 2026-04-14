@@ -59,7 +59,7 @@ After starting the backend in development, view API docs at:
 ```
 bytesize/
 ├── backend/                          # Ruby on Rails API (URL shortener + analytics)
-├── frontend/                         # React + TypeScript app
+├── frontend/                         # React + TypeScript app (Vite)
 ├── docs/                             # Project documentation and assets
 ├── .gitlab/                          # Merge Request template
 ```
