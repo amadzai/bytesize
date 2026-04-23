@@ -17,9 +17,9 @@ This project is a monorepo with **Ruby on Rails (API) + PostgreSQL** for the bac
 ### Core Dependencies
 
 - Backend: Docker (with Compose)
-- Frontend: Node.js (LTS) and pnpm 9+
+- Frontend and Extension: Node.js (LTS) and pnpm 9+
 
-For full dependency details, see [`backend/Gemfile`](backend/Gemfile) and [`frontend/package.json`](frontend/package.json).
+For full dependency details, see [`backend/Gemfile`](backend/Gemfile), [`frontend/package.json`](frontend/package.json), and [`extension/package.json`](extension/package.json).
 
 ### Local Setup
 
@@ -42,6 +42,16 @@ For full dependency details, see [`backend/Gemfile`](backend/Gemfile) and [`fron
    - Frontend App: [http://localhost:5173](http://localhost:5173)
    - Backend API: [http://localhost:3000](http://localhost:3000)
 
+4. _(Optional)_ Load the browser extension in Chrome:
+
+   ```bash
+   cd extension
+   pnpm install
+   pnpm build
+   ```
+
+   Then open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select `extension/dist/`.
+
 ### Workspace
 
 If you are using VS Code/Cursor, open project using monorepo workspace file so project-specific settings and extensions (e.g., Ruby LSP) work as intended:
@@ -60,6 +70,7 @@ After starting the backend in development, view API docs at:
 bytesize/
 ├── backend/                          # Ruby on Rails API (URL shortener + analytics)
 ├── frontend/                         # React + TypeScript app
+├── extension/                        # Chrome browser extension (MV3)
 ├── docs/                             # Project documentation and assets
 ├── .gitlab/                          # Merge Request template
 ```
@@ -68,6 +79,7 @@ For implementation details, see:
 
 - [`backend/README.md`](backend/README.md)
 - [`frontend/README.md`](frontend/README.md)
+- [`extension/README.md`](extension/README.md)
 
 For wiki on short URL path solution, see:
 
