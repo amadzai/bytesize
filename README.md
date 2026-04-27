@@ -97,5 +97,7 @@ For step-by-step request flows (URL shortening and redirect), see [`docs/diagram
 
 Bytesize App: [https://app.bytesize.now/](https://app.bytesize.now/)
 
+Chrome Web Store Extension: [bytesize | Chrome Web Store](https://chromewebstore.google.com/detail/bytesize/jhcghcapaahkmmbgplmbmijkpjjemjol)
+
 - The backend API is deployed on a Contabo VPS using Docker, with Nginx as a reverse proxy.
 - The frontend is deployed on Vercel.
