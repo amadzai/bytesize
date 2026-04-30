@@ -1,4 +1,6 @@
 class UrlsController < ApplicationController
+  wrap_parameters false
+
   rate_limit to: 10, within: 1.minute, only: :shorten, with: RATE_LIMIT_EXCEEDED
   rate_limit to: 60, within: 1.minute, only: :index, with: RATE_LIMIT_EXCEEDED
 
