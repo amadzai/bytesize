@@ -100,6 +100,83 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
     end
   end
 
+  test "follows a single redirect to success" do
+    http = FakeHttp.new([
+      redirect_response(location: "https://example.com/final"),
+      success_response("<html><head><title>Final</title></head></html>")
+    ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://example.com")
+      assert_equal "Final", title
+      assert_equal 2, http.calls
+    end
+  end
+
+  test "follows redirects up to MAX_ATTEMPTS then parses title" do
+    http = FakeHttp.new([
+      redirect_response(location: "https://example.com/a"),
+      redirect_response(location: "https://example.com/b"),
+      redirect_response(location: "https://example.com/c"),
+      success_response("<html><head><title>Deep</title></head></html>")
+    ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://example.com")
+      assert_equal "Deep", title
+      assert_equal Urls::FetchTitle::MAX_ATTEMPTS, http.calls
+    end
+  end
+
+  test "stops after MAX_ATTEMPTS and returns host fallback" do
+    actions = Array.new(Urls::FetchTitle::MAX_ATTEMPTS) do
+      redirect_response(location: "https://example.com/loop")
+    end
+    http = FakeHttp.new(actions)
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://example.com")
+      assert_equal "example.com", title
+      assert_equal Urls::FetchTitle::MAX_ATTEMPTS, http.calls
+    end
+  end
+
+  test "returns host fallback when redirect has no Location header" do
+    http = FakeHttp.new([ redirect_response(location: nil) ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://example.com")
+      assert_equal "example.com", title
+      assert_equal 1, http.calls
+    end
+  end
+
+  test "follows redirect to a different host" do
+    http = FakeHttp.new([
+      redirect_response(location: "https://other.example.org/page"),
+      success_response("<html><head><title>Cross Host</title></head></html>")
+    ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("https://example.com")
+      assert_equal "Cross Host", title
+      assert_equal 2, http.calls
+    end
+  end
+
+  test "upgrades scheme on redirect from http to https" do
+    http = FakeHttp.new([
+      redirect_response(location: "https://example.com/secure"),
+      success_response("<html><head><title>Secure</title></head></html>")
+    ])
+
+    Net::HTTP.stub(:new, ->(_host, _port) { http }) do
+      title = Urls::FetchTitle.call("http://example.com")
+      assert_equal "Secure", title
+      assert_equal true, http.use_ssl
+    end
+  end
+
   private
 
   def success_response(body)
@@ -116,6 +193,14 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
     end
   end
 
+  def redirect_response(location:, status_code: "302", message: "Found")
+    Net::HTTPResponse::CODE_TO_OBJ.fetch(status_code).new("1.1", status_code, message).tap do |response|
+      response.instance_variable_set(:@body, "")
+      response.instance_variable_set(:@read, true)
+      response["location"] = location if location
+    end
+  end
+
   class FakeHttp
     attr_accessor :use_ssl, :open_timeout, :read_timeout
     attr_reader :calls
@@ -125,7 +210,7 @@ class Urls::FetchTitleTest < ActiveSupport::TestCase
       @calls = 0
     end
 
-    def get(_request_uri)
+    def get(_request_uri, _headers = nil)
       @calls += 1
       action = @actions.shift
       raise action if action.is_a?(Exception)
