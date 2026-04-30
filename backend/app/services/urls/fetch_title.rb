@@ -2,7 +2,7 @@ require "net/http"
 
 module Urls
   class FetchTitle
-    TIMEOUT_SECONDS = 2
+    TIMEOUT_SECONDS = 3
     MAX_ATTEMPTS = 4
     USER_AGENT = "Mozilla/5.0 (compatible; BytesizeBot/1.0; +https://app.bytesize.now)"
 
