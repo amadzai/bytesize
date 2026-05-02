@@ -28,9 +28,7 @@ module Urls
 
         case response
         when Net::HTTPRedirection
-          location = response["location"]
-          return host if location.blank?
-          uri = URI.join(uri, location)
+          uri = URI.join(uri, response["location"])
         when Net::HTTPSuccess
           title = Nokogiri::HTML(response.body).at_css("title")&.text&.strip
           return title.presence || host
