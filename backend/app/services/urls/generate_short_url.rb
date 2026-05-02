@@ -8,10 +8,7 @@ module Urls
     end
 
     def call
-      loop do
-        code = SecureRandom.alphanumeric(LENGTH)
-        break code unless Url.exists?(short_url: code)
-      end
+      SecureRandom.alphanumeric(LENGTH)
     end
   end
 end

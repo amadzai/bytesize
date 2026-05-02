@@ -17,20 +17,22 @@ class UrlsController < ApplicationController
         }, status: :unprocessable_entity
     end
 
-    url.short_url = Urls::GenerateShortUrl.call
     url.title = Urls::FetchTitle.call(target_url)
 
-    if url.save
-      render json: {
-        target_url: url.target_url,
-        short_url: url.short_url,
-        title: url.title
-      }, status: :created
-    else
-      render json: { errors: url.errors.full_messages }, status: :unprocessable_entity
+    begin
+      url.short_url = Urls::GenerateShortUrl.call
+      url.save!
+    rescue ActiveRecord::RecordNotUnique
+      retry
     end
-  rescue ActiveRecord::RecordNotUnique
-    retry
+
+    render json: {
+      target_url: url.target_url,
+      short_url: url.short_url,
+      title: url.title
+    }, status: :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
   end
 
   def index

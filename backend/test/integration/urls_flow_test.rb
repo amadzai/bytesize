@@ -41,8 +41,10 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     url.validate
 
     Url.stub(:new, url) do
-      url.stub(:save, false) do
-        post "/urls", params: { target_url: "https://example.com/path" }
+      url.stub(:save!, ->(*) { raise ActiveRecord::RecordInvalid.new(url) }) do
+        Urls::FetchTitle.stub(:call, "Title") do
+          post "/urls", params: { target_url: "https://example.com/path" }
+        end
       end
     end
 
@@ -73,7 +75,7 @@ class UrlsFlowTest < ActionDispatch::IntegrationTest
     end.new("https://example.com/retry", nil, nil, fake_errors.new([]))
 
     save_calls = 0
-    fake_url.define_singleton_method(:save) do
+    fake_url.define_singleton_method(:save!) do
       save_calls += 1
       raise ActiveRecord::RecordNotUnique if save_calls == 1
 
